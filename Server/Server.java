@@ -39,7 +39,7 @@ public class Server {
     private static String password="270212";
     public static void main(String[] args) throws IOException, ClassNotFoundException, SQLException {
         ClientConnection clientConnection = null;
-        IOInterfaceStream ioServer=new IOTerminal(System.in,System.out);
+        IOInterfaceStream ioServer=new IOTerminal(System.out,System.in);
         LOGGER=Logger.getLogger(Server.class.getName());
         Integer PORT=Integer.parseInt(args[0]);
         try{
@@ -118,12 +118,16 @@ public class Server {
                                 to.remove(selectionKey);
                             }
                             if (res.containsKey(selectionKey)&&res.get(selectionKey).isDone()) {
-                                new SendResponse(channel).sendResponse(res.get(selectionKey).get());
+                                try {
+                                    new SendResponse(channel).sendResponse(res.get(selectionKey).get());
+                                }
+                                catch (NullPointerException e){
+                                    System.exit(0);
+                                }
                                 res.remove(selectionKey);
-                                LOGGER.log(Level.INFO, "Ответ отправлен клиенту");
                                 selectionKey.interestOps(SelectionKey.OP_READ);
                             }
-
+                        LOGGER.log(Level.INFO, "Ответ отправлен клиенту");
                             }
 
                     if (selectionKey.isReadable()) {

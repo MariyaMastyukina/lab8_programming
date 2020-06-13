@@ -16,6 +16,7 @@ public class GroupCountingByPopulationCommand implements Command {
     CollectWorker coll;
     static Logger LOGGER;
     TypeCommand type;
+    static int argsSize;
     /**
      * Конструктор - создание нового объекта с определенными значениями
      * @param p- переменная для управления командами
@@ -26,6 +27,8 @@ public class GroupCountingByPopulationCommand implements Command {
         this.coll=collection;
         LOGGER=Logger.getLogger(GroupCountingByPopulationCommand.class.getName());
         type=TypeCommand.INFORM;
+        argsSize=0;
+
     }
     /**
      * Функция выполнения команды
@@ -33,6 +36,15 @@ public class GroupCountingByPopulationCommand implements Command {
     @Override
     public Request execute(CommandObject user) throws IOException {
         LOGGER.log(Level.INFO,"Отправка результата выполнения команды на сервер");
-        return new Request(coll.group_counting_by_population(),null);
+        return new Request(coll.group_counting_by_population(),null,null);
+    }
+    @Override
+    public String getName() {
+        return "group_counting_by_population";
+    }
+
+    @Override
+    public int getargsSize() {
+        return argsSize;
     }
 }

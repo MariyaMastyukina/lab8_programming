@@ -1,20 +1,24 @@
 package Client;
 
+import Client.GUI.MainWindow;
+
 import java.io.*;
 
 /**
  * Класс, работающий с потоками ввода/вывода
  */
 public class IOTerminal implements IOInterfaceStream {
+    private OutputStream out;
+    private InputStream in;
     private Writer writer;
-    private transient InputStream in;
-    private transient OutputStream out;
+    private Reader reader;
     private transient BufferedReader bufferedReader;
-    public IOTerminal(InputStream in, OutputStream out) {
+    public IOTerminal(OutputStream out, InputStream in) {
+        this.out=out;
         this.in=in;
-        this.out = out;
-        writer=new OutputStreamWriter(out);
-        bufferedReader = new BufferedReader(new InputStreamReader(in));
+        reader=new InputStreamReader(in);
+        writer= new OutputStreamWriter(out);
+        bufferedReader = new BufferedReader(reader);
     }
     /**
      * Функция записи строки в заданный поток

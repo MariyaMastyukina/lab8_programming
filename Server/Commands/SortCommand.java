@@ -15,6 +15,7 @@ import java.util.logging.Logger;
 public class SortCommand implements Command {
     CollectWorker coll;
     static Logger LOGGER;
+    static int argsSize;
     /**
      * Конструктор - создание нового объекта с определенными значениями
      * @param p- переменная для управления командами
@@ -23,6 +24,8 @@ public class SortCommand implements Command {
     public SortCommand(ControlUnit p, CollectWorker collection){
         p.addCommand("sort",this);
         this.coll=collection;
+        argsSize=0;
+
         LOGGER=Logger.getLogger(SortCommand.class.getName());
     }
     /**
@@ -31,7 +34,16 @@ public class SortCommand implements Command {
     @Override
     public Request execute(CommandObject user) throws IOException {
         LOGGER.log(Level.INFO,"Отправка результата выполнения команды на сервер");
-        return new Request(coll.sort(),null);
+        return new Request(coll.sort(),null,null);
+    }
+    @Override
+    public String getName() {
+        return "sort";
+    }
+
+    @Override
+    public int getargsSize() {
+        return argsSize;
     }
 
 }

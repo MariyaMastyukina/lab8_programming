@@ -13,13 +13,12 @@ import java.io.PipedReader;
 import java.io.PipedWriter;
 
 public class ConnectWindow extends JFrame{
-    static PipedReader reader=new PipedReader();
-    PipedWriter writer=new PipedWriter(reader);
-    static BufferedReader br=new BufferedReader(reader);
+    PipedWriter writer;
     JTextField port;
     JTextField host;
-    public ConnectWindow() throws IOException {
+    public ConnectWindow(PipedWriter writer) throws IOException {
         super("Подключение к серверу");
+        this.writer=writer;
         Toolkit toolkit=Toolkit.getDefaultToolkit();
         setBounds(toolkit.getScreenSize().width/5,toolkit.getScreenSize().height/5,toolkit.getScreenSize().width/5,toolkit.getScreenSize().height/5);
         port=new JTextField();
@@ -42,16 +41,5 @@ public class ConnectWindow extends JFrame{
             }
         });
         add(button,BorderLayout.SOUTH);
-    }
-    public static void main(String[] args) throws IOException, ClassNotFoundException {
-        ConnectWindow app = new ConnectWindow();
-        app.setVisible(true);
-        while(!br.ready()){}
-        ServerConnection serverConnection=new ServerConnection();
-        serverConnection.connection(br.readLine(),br.readLine());
-        IOInterfaceStream ioServer = new IOTerminal(serverConnection.getInputStream(), serverConnection.getOutputStream());
-        app.setVisible(false);
-        User.createUser(ioServer);
-
     }
 }

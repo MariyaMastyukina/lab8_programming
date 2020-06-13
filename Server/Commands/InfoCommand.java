@@ -16,6 +16,7 @@ public class InfoCommand implements Command {
     private CollectWorker coll;
     static Logger LOGGER;
     TypeCommand type;
+    static int argsSize;
     /**
      * Конструктор - создание нового объекта с определенными значениями
      * @param p- переменная для управления командами
@@ -26,6 +27,7 @@ public class InfoCommand implements Command {
         this.coll=collection;
         LOGGER=Logger.getLogger(InfoCommand.class.getName());
         type=TypeCommand.INFORM;
+        argsSize=0;
 
     }
     /**
@@ -34,6 +36,17 @@ public class InfoCommand implements Command {
     @Override
     public Request execute(CommandObject user) throws IOException {
         LOGGER.log(Level.INFO,"Отправка результата выполнения команды на сервер");
-        return new Request(coll.info(),null);
+        return new Request(coll.info(),null,null);
     }
+
+    @Override
+    public String getName() {
+        return "info";
+    }
+
+    @Override
+    public int getargsSize() {
+        return argsSize;
+    }
+
 }

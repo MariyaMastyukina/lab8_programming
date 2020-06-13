@@ -17,6 +17,8 @@ public class PrintAscendingCommand implements Command {
     CollectWorker coll;
     static Logger LOGGER;
     TypeCommand type;
+    static int argsSize;
+
     /**
      * Конструктор - создание нового объекта с определенными значениями
      * @param p- переменная для управления командами
@@ -27,6 +29,7 @@ public class PrintAscendingCommand implements Command {
         this.coll=collection;
         LOGGER=Logger.getLogger(PrintAscendingCommand.class.getName());
         type=TypeCommand.INFORM;
+        argsSize=0;
     }
     /**
      * Функция выполнения команды
@@ -34,6 +37,17 @@ public class PrintAscendingCommand implements Command {
     @Override
     public Request execute(CommandObject user) throws IOException {
         LOGGER.log(Level.INFO,"Отправка результата выполнения команды на сервер");
-        return new Request(coll.print_ascending(),null);
+        return new Request(coll.print_ascending(),null,null);
     }
+
+    @Override
+    public String getName() {
+        return "print_ascending";
+    }
+
+    @Override
+    public int getargsSize() {
+        return argsSize;
+    }
+
 }

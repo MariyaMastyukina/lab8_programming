@@ -14,6 +14,11 @@ public class CollectionDB {
         this.connection=connection;
         this.collTable=collTable;
     }
+    public static ResultSet getTable() throws SQLException {
+        Statement statement=connection.createStatement();
+        ResultSet rs=statement.executeQuery("select * from "+collTable);
+        return rs;
+    }
     public void closeConnection() throws SQLException {
         connection.close();
     }

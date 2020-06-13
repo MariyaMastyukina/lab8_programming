@@ -1,6 +1,23 @@
 package Client;
 
+import Client.GUI.ConnectWindow;
+import Client.GUI.MainWindow;
+import Server.Collection.CollectWorker;
+import Server.Collection.ControlUnit;
+import Server.Launch;
+import Server.Request;
+import com.sun.jdi.connect.Connector;
+
+import javax.swing.*;
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.PipedReader;
+import java.io.PipedWriter;
+import java.net.Socket;
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.Locale;
+import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -11,54 +28,70 @@ import java.util.logging.Logger;
 public class Client {
     static Logger LOGGER;
     public static void main(String[] args) throws IOException, ClassNotFoundException {
-        LOGGER=Logger.getLogger(Client.class.getName());
-        IOInterfaceStream ioClient = new IOTerminal(System.in, System.out);
-        ServerConnection serverConnection = new ServerConnection();
-        LOGGER.log(Level.INFO,"Начало работы клиента");
-        if (args.length == 2) {
-            LOGGER.log(Level.INFO,"Подключение к серверу");
-            serverConnection.connection(args[0], args[1]);
-        } else {
-            LOGGER.log(Level.INFO,"Ошибка в соединении с сервером, неверный хост, порт");
-            ioClient.writeln("введите корректный хост и порт");
-            System.exit(0);
+        new Launch(null,null,new ControlUnit());
+        PipedWriter cmdWriter = new PipedWriter();
+        PipedReader cmdReader = new PipedReader(cmdWriter);
+        BufferedReader brcmd=new BufferedReader(cmdReader);
+        PipedReader resultReader = new PipedReader();
+        PipedWriter resultWriter = new PipedWriter(resultReader);
+        BufferedReader br=new BufferedReader(resultReader);
+        ConnectWindow app = new ConnectWindow(resultWriter);
+        app.setVisible(true);
+        while(!br.ready()){}
+        ServerConnection serverConnection=new ServerConnection();
+        Socket socket=serverConnection.connection(br.readLine(),br.readLine(),app);
+        while(socket==null){
+            socket=serverConnection.connection(br.readLine(),br.readLine(),app);
         }
-
-        IOInterfaceStream ioServer = new IOTerminal(serverConnection.getInputStream(), serverConnection.getOutputStream());
-        LOGGER.log(Level.INFO,"Ждем готовности сервера");
-        LOGGER.log(Level.INFO,"Получаем спсиок команд с сервера");
-        TransferObject transferObject = new TransferObject(ioServer, ioClient, serverConnection);
-        User user= User.createUser(ioServer);
-        ioClient.writeln("Здравстуйте! Введите \"help\", чтобы увидеть список доступных команд");
-        ioClient.writeln("Введите команду");
-        LOGGER.log(Level.INFO,"Считываем команду с консоли");
+        IOInterfaceStream ioServer = new IOTerminal(serverConnection.getOutputStream(),serverConnection.getInputStream());
+        app.setVisible(false);
+        User user=User.createUser(ioServer,app,cmdWriter);
+        TransferObject transferObject = new TransferObject(ioServer,serverConnection,user.getMain());
         while(true) {
-            try {
-                CommandObject command;
-               String  line = ioClient.readLine();
-                LOGGER.log(Level.INFO, "Создаем объект текущей команды");
-                    if (line.equals("exit")){
-                        user=User.createUser(ioServer);
-                        ioClient.writeln("Здравстуйте! Введите \"help\", чтобы увидеть список доступных команд");
-                        ioClient.writeln("Введите команду");
+            while (!brcmd.ready()){}
+            CommandObject command;
+            ArrayList<String> argsAdd = null;
+            String line = brcmd.readLine();
+                    if (line.equals("exit ")){
+                        user.getMain().setVisible(false);
+                        User.createUser(ioServer,app,cmdWriter);
                         continue;
                     }
-                    command = new CommandObject(line, null);
-                    command.setLogin(user.getLogin());
-                    command.setPassword(user.getPassword());
-                    if (command.getChecker()) {
-                        try {
-                            LOGGER.log(Level.INFO, "Запускаем метод отправки командв на севрер");
-                            transferObject.transfer(command);
-                        } catch (StackOverflowError e) {
-                            ioClient.writeln("Произошла зацикливнаие команды execute_script. Выполнение команды прекращено");
+                    if (line.equals("add") || line.contains("update")){
+                        argsAdd = new ArrayList<>();
+                        while (brcmd.ready()){
+                            argsAdd.add(brcmd.readLine());
                         }
                     }
-                    ioClient.writeln("Введите команду");
-                    LOGGER.log(Level.INFO, "Считываем команду с консоли");
-            } catch (NullPointerException e) {
-                ioClient.writeln("Введите команду еще раз");
+            System.out.println(argsAdd);
+                    command = new CommandObject(line, null);
+            if (argsAdd != null) {
+                command.setArgs(argsAdd);
             }
+                    command.setLogin(User.getLogin());
+                    command.setPassword(User.getPassword());
+                    if (command.getChecker()) {
+                        try {
+                            transferObject.transfer(command);
+                        } catch (StackOverflowError e) {
+                            JOptionPane.showMessageDialog(user.getMain(),"Команда execute_script зациклилась:(","ОШИБКА", JOptionPane.ERROR_MESSAGE);
+
+                        }
+                    }
         }
     }
-}
+    }
+
+//
+//
+//
+//        IOInterfaceStream ioServer = new IOTerminal(serverConnection.getInputStream(), serverConnection.getOutputStream());
+//        LOGGER.log(Level.INFO,"Ждем готовности сервера");
+//        LOGGER.log(Level.INFO,"Получаем спсиок команд с сервера");
+//        TransferObject transferObject = new TransferObject(ioServer, ioClient, serverConnection);
+//        User user= User.createUser(ioServer);
+//        ioClient.writeln("Здравстуйте! Введите \"help\", чтобы увидеть список доступных команд");
+//        ioClient.writeln("Введите команду");
+//        LOGGER.log(Level.INFO,"Считываем команду с консоли");
+//
+//}

@@ -14,6 +14,7 @@ import java.util.logging.Logger;
 public class HelpCommand implements Command {
     static Logger LOGGER;
     TypeCommand type;
+    static int argsSize;
     /**
      * Конструктор - создание нового объекта с определенными значениями
      * @param p- переменная для управления командами
@@ -22,7 +23,7 @@ public class HelpCommand implements Command {
         p.addCommand("help",this);
         LOGGER=Logger.getLogger(HelpCommand.class.getName());
         type=TypeCommand.INFORM;
-
+        argsSize=0;
     }
     /**
      * Функция выполнения команды
@@ -47,6 +48,17 @@ public class HelpCommand implements Command {
         sb.append("remove_all_by_meters_above_sea_level metersAboutSeaLevel:удалить из коллекции все элементы, значение поля metersAboveSeaLevel которого эквивалентно заданному").append("\n");
         sb.append("group_counting_by_population:сгруппировать элементы коллекции по значению поля population, вывести количество элементов в каждой группе").append("\n");
         sb.append("print_ascending:вывести элементы коллекции в порядке возрастания");
-        return new Request(sb.toString(),null);
+        return new Request(sb.toString(),null,null);
     }
+
+    @Override
+    public String getName() {
+        return "help";
+    }
+
+    @Override
+    public int getargsSize() {
+        return argsSize;
+    }
+
 }

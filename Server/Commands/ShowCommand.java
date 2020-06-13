@@ -16,6 +16,7 @@ public class ShowCommand implements Command {
     CollectWorker coll;
     static Logger LOGGER;
     TypeCommand type;
+    static int argsSize;
     /**
      * Конструктор - создание нового объекта с определенными значениями
      * @param p- переменная для управления командами
@@ -26,6 +27,7 @@ public class ShowCommand implements Command {
         this.coll = collection;
         LOGGER=Logger.getLogger(ShowCommand.class.getName());
         type=TypeCommand.INFORM;
+        argsSize=0;
 
     }
     /**
@@ -34,6 +36,15 @@ public class ShowCommand implements Command {
     @Override
     public Request execute(CommandObject CO) throws IOException {
         LOGGER.log(Level.INFO,"Отправка результата выполнения команды на сервер");
-        return new Request(coll.show(),null);
+        return new Request(coll.show(),null,null);
         }
+    @Override
+    public String getName() {
+        return "remove_last";
+    }
+
+    @Override
+    public int getargsSize() {
+        return argsSize;
+    }
     }

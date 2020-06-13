@@ -18,6 +18,7 @@ public class ClearCommand implements Command {
     CollectWorker coll;
     static Logger LOGGER;
     TypeCommand type;
+    static int argsSize;
     /**
      * Конструктор - создание нового объекта с определенными значениями
      * @param p- переменная для управления командами
@@ -28,6 +29,8 @@ public class ClearCommand implements Command {
         this.coll=collection;
         LOGGER=Logger.getLogger(ClearCommand.class.getName());
         type=TypeCommand.EDIT;
+        argsSize=0;
+
     }
     /**
      * Функция выполнения команды
@@ -37,14 +40,23 @@ public class ClearCommand implements Command {
         LOGGER.log(Level.INFO, "Отправка результата выполнения команды на сервер");
         String result = CollectionDB.clearDB(user.getLogin());
         if (coll.getSize() == 0) {
-            return new Request("Команда clear не выполнена. Коллекция пуста",null);
+            return new Request("Команда clear не выполнена. Коллекция пуста",null,null);
         } else {
             coll.clear(user.getLogin());
             if (result.isEmpty()) {
-                return new Request("Команда clear выполнена. Коллекция очищена",null);
+                return new Request("Команда clear выполнена. Коллекция очищена",coll.getCollection(),null);
             } else {
-                return new Request("Команда clear выполнена, но было отказано в доступе к объектам с именами и id: \n" + result,null);
+                return new Request("Команда clear выполнена, но было отказано в доступе к объектам с именами и id: \n" + result,coll.getCollection(),null);
             }
         }
+    }
+    @Override
+    public String getName() {
+        return "clear";
+    }
+
+    @Override
+    public int getargsSize() {
+        return argsSize;
     }
     }

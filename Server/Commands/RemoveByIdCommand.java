@@ -20,6 +20,7 @@ public class RemoveByIdCommand implements Command {
     CollectWorker coll;
     static Logger LOGGER;
     TypeCommand type;
+    static int argsSize;
     /**
      * Конструктор - создание нового объекта с определенными значениями
      * @param p- переменная для управления командами
@@ -30,6 +31,8 @@ public class RemoveByIdCommand implements Command {
         this.coll=collection;
         LOGGER=Logger.getLogger(RemoveByIdCommand.class.getName());
         type=TypeCommand.EDIT;
+        argsSize=1;
+
     }
     /**
      * Функция выполнения команды
@@ -45,13 +48,22 @@ public class RemoveByIdCommand implements Command {
                     checker = CollectionDB.removeIDBD(id, CO.getLogin());
                     if (checker == null) {
                         coll.remove_by_id(id, CO.getLogin());
-                        return new Request("Команда remove_by_id выполнена. Элемент из коллекции с id " + id + " удален",coll.getCollection());
-                    } else return new Request(checker,coll.getCollection());
+                        return new Request("Команда remove_by_id выполнена. Элемент из коллекции с id " + id + " удален",coll.getCollection(),null);
+                    } else return new Request(checker,coll.getCollection(),null);
                 }
             }
-            return new Request("Элемента с таким id нет. Введите команду \"show\", чтобы увидеть элементы коллекции и их id.",coll.getCollection());
+            return new Request("Элемента с таким id нет.",null,null);
         } else {
-            return new Request("Команда remove_by_id не выполнена. Коллекция пуста",coll.getCollection());
+            return new Request("Команда remove_by_id не выполнена. Коллекция пуста",null,null);
         }
+    }
+    @Override
+    public String getName() {
+        return "remove_by_id";
+    }
+
+    @Override
+    public int getargsSize() {
+        return argsSize;
     }
 }

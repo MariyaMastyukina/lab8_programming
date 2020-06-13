@@ -18,6 +18,7 @@ public class UpdateCommand implements Command {
     CollectWorker coll;
     static Logger LOGGER;
     TypeCommand type;
+    static int argsSize;
 
     /**
      * Конструктор - создание нового объекта с определенными значениями
@@ -29,6 +30,7 @@ public class UpdateCommand implements Command {
         p.addCommand("update", this);
         this.coll = collection;
         type=TypeCommand.EDIT;
+        argsSize=1;
     }
 
     /**
@@ -37,23 +39,32 @@ public class UpdateCommand implements Command {
     @Override
     public Request execute(CommandObject CO) throws IOException, SQLException {
         System.out.println(CO.getArgs().size());
-        String checker = null;
+        String checker;
+        City newcity;
         long id = Long.parseLong(CO.getOption());
         for (City city : coll.getCollection()) {
             if (city.getIdOfCity() == id) {
-                City newcity = new City(CO.getArgs());
+                 newcity= new City(CO.getArgs());
                 newcity.setId(id);
                 newcity.setUser(CO.getLogin());
                 checker = CollectionDB.UpdateIDDB(id, newcity);
                 if (checker == null) {
                     coll.update(newcity, CO.getLogin());
-                    return new Request( "Команда update выполнена. Значение элемента коллекции с id " + Integer.parseInt(CO.getOption()) + " обновлено, введите команду \"show\", чтобы увидеть содержимое коллекции",coll.getCollection());
+                    return new Request("Команда update выполнена. Значение элемента коллекции с id " + Integer.parseInt(CO.getOption()), coll.getCollection(), null);
+                } else {
+                    return new Request(checker, null, null);
                 }
             }
-            else{
-                return new Request(checker,coll.getCollection());
-            }
         }
-        return new Request("Элемента с таким id нет. Введите команду \"show\", чтобы увидеть элементы коллекции и их id.",coll.getCollection());
+        return new Request("Элемента с таким id нет.",null,null);
+    }
+    @Override
+    public String getName() {
+        return "update";
+    }
+
+    @Override
+    public int getargsSize() {
+        return argsSize;
     }
 }

@@ -18,6 +18,7 @@ public class RemoveAllBYMetersAboveSeaLevelCommand implements Command {
     CollectWorker coll;
     static Logger LOGGER;
     TypeCommand type;
+    static int argsSize;
     /**
      * Конструктор - создание нового объекта с определенными значениями
      * @param p- переменная для управления командами
@@ -28,6 +29,8 @@ public class RemoveAllBYMetersAboveSeaLevelCommand implements Command {
         this.coll=collection;
         LOGGER=Logger.getLogger(RemoveAllBYMetersAboveSeaLevelCommand.class.getName());
         type=TypeCommand.EDIT;
+        argsSize=1;
+
     }
     /**
      * Функция выполнения команды
@@ -39,8 +42,19 @@ public class RemoveAllBYMetersAboveSeaLevelCommand implements Command {
         String answer=coll.remove_by_meters_above_sea_level(Integer.parseInt(user.getOption()),user.getLogin());
 
         if(!result.isEmpty()) {
-            return new Request("Команда remove_all_by_meters_above_sea_level выполнена, но вы не смогли удалить следующие объекты из-за отказа в доступе:\n"+result,coll.getCollection());
+            return new Request("Команда remove_all_by_meters_above_sea_level выполнена, но вы не смогли удалить следующие объекты из-за отказа в доступе:\n"+result,coll.getCollection(),null);
         }
-        return new Request(answer,coll.getCollection());
+        return new Request(answer,coll.getCollection(),null);
     }
+
+    @Override
+    public String getName() {
+        return "remove_all_by_meters_above_sea_level";
+    }
+
+    @Override
+    public int getargsSize() {
+        return argsSize;
+    }
+
 }

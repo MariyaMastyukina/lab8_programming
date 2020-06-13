@@ -17,10 +17,15 @@ import java.util.Map;
  */
 public class ControlUnit {
     /** Коллекция Map для хранения комманд*/
-    private Map<String,Command>Commands=new HashMap<>();;
+    private static Map<String,Command>Commands=new HashMap<>();;
     /** Список последних восьми команд*/
     private List<String> lastCommands=new ArrayList<>();
     private int numberCommand=0;
+
+    public static Map<String, Command> getCommands() {
+        return Commands;
+    }
+
     /**
      * Функция добавления комманды в Map
      * @param key- ключ комманды

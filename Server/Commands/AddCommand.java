@@ -19,6 +19,7 @@ public class AddCommand implements Command {
     CollectWorker coll;
     static Logger LOGGER;
     private TypeCommand type;
+    static int argsSize;
     /**
      * Конструктор - создание нового объекта с определенными значениями
      *
@@ -30,6 +31,8 @@ public class AddCommand implements Command {
         this.coll = collection;
         LOGGER=Logger.getLogger(AddCommand.class.getName());
         type=TypeCommand.EDIT;
+        argsSize=0;
+
     }
 
     /**
@@ -42,6 +45,16 @@ public class AddCommand implements Command {
         city.setUser(user.getLogin());
         CollectionDB.insertColl(city,false,user.getLogin());
         coll.add(city);
-        return new Request("Команда add выполнена. Элемент добавлен в коллекцию, введите команду \"show\", чтобы увидеть содержимое коллекции",coll.getCollection());
+        return new Request("Команда add выполнена. Элемент добавлен в коллекцию, введите команду \"show\", чтобы увидеть содержимое коллекции",coll.getCollection(),null);
+    }
+
+    @Override
+    public String getName() {
+        return "add";
+    }
+
+    @Override
+    public int getargsSize() {
+        return argsSize;
     }
 }

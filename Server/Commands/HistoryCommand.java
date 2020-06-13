@@ -16,6 +16,7 @@ public class HistoryCommand implements Command {
     static Logger LOGGER;
     private CollectWorker coll;
     TypeCommand type;
+    static int argsSize;
     /**
      * Конструктор - создание нового объекта с определенными значениями
      * @param p- переменная для управления командами
@@ -27,6 +28,8 @@ public class HistoryCommand implements Command {
         this.coll=coll;
         LOGGER=Logger.getLogger(HistoryCommand.class.getName());
         type=TypeCommand.INFORM;
+        argsSize=0;
+
     }
     /**
      * Функция выполнения команды
@@ -34,6 +37,16 @@ public class HistoryCommand implements Command {
     @Override
     public Request execute(CommandObject user) throws IOException {
         LOGGER.log(Level.INFO,"Отправка результата выполнения команды на сервер");
-        return new Request(coll.history(pusk),null);
+        return new Request(coll.history(pusk),null,null);
+    }
+
+    @Override
+    public String getName() {
+        return "history";
+    }
+
+    @Override
+    public int getargsSize() {
+        return argsSize;
     }
 }

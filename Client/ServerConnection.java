@@ -1,5 +1,7 @@
 package Client;
 
+import javax.swing.*;
+import java.awt.*;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -18,7 +20,7 @@ public class ServerConnection {
      * @param host- имя хоста
      * @param PORT- порт
      */
-    public Socket connection(String host,String PORT) throws IOException {
+    public Socket connection(String host, String PORT, Component component) throws IOException {
         try {
             //создает сокет, соединение с сервером
             socket = new Socket(host, Integer.parseInt(PORT));
@@ -26,13 +28,11 @@ public class ServerConnection {
             return socket;
         }
         catch(ConnectException|UnknownHostException e){
-            System.out.println("Не удалось установить соединение с сервером");
-            System.exit(0);
+            JOptionPane.showMessageDialog(component,"Не удалось установить соединение с сервером","ОШИБКА", JOptionPane.ERROR_MESSAGE);
             return null;
         }
         catch(NumberFormatException e){
-            System.out.println("Введен некорректный порт");
-            System.exit(0);
+            JOptionPane.showMessageDialog(component,"Введен некорректный порт","ОШИБКА", JOptionPane.ERROR_MESSAGE);
             return null;
         }
     }

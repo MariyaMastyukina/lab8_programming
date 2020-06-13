@@ -2,27 +2,43 @@ package Client;
 
 import Client.GUI.AutorizationWindow;
 import Client.GUI.LoginWindow;
+import Client.GUI.MainWindow;
 import Client.GUI.RegisterWindow;
 import Server.Request;
 
 import javax.swing.*;
+import java.awt.*;
 import java.io.*;
+import java.util.Locale;
+import java.util.ResourceBundle;
 
 public class User {
-    private String login;
-    private char[] password;
+    static ResourceBundle res;
+    private static String login;
+    private static Request table;
+    private static char[] password;
+    public static boolean permission;
+    public static MainWindow mainWindow;
     private static AutorizationWindow autorization=null;
-    public User(String login, char[] password){
+    static PipedReader reader=new PipedReader();
+    static BufferedReader br=new BufferedReader(reader);
+    static PipedWriter writer;
+    static {
+        try {
+            writer = new PipedWriter(reader);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public User(String login, char[] password) throws IOException {
         this.login=login;
         this.password=password;
     }
-    public static User createUser(IOInterfaceStream ioServer) throws IOException, ClassNotFoundException {
-        PipedReader reader=new PipedReader();
-        BufferedReader br=new BufferedReader(reader);
-        PipedWriter writer=new PipedWriter(reader);
+    public static User createUser(IOInterfaceStream ioServer, Component component,PipedWriter cmdWriter) throws IOException, ClassNotFoundException {
         LoginWindow loginWindow = null;
         RegisterWindow register = null;
-        boolean permission=false;
+        permission=false;
         if (autorization==null){
             autorization=new AutorizationWindow(writer);
         }
@@ -58,6 +74,7 @@ public class User {
                     CommandObject commandObject = new CommandObject("sign_in", null);
                     commandObject.setLogin(login);
                     commandObject.setPassword(password);
+                    System.out.println(commandObject.getNameCommand());
                     ioServer.writeObj(commandObject);
                 }
                 while (!ioServer.ready()) {
@@ -72,8 +89,26 @@ public class User {
                 if (sb.toString().equals("Вход произошел успешно")) {
                     permission = true;
                     loginWindow.setVisible(false);
-                }else if (sb.toString().equals("Пользователь "+login+" зарегистрирован")){
+                    Locale[] locales={new Locale("ru"), new Locale("bg"),new Locale("fi"),new Locale("es","MX")};
+                    CommandObject currentCommand=new CommandObject("getTable",null);
+                    ioServer.writeObj(currentCommand);
+                    while (!ioServer.ready()){}
+                    table=(Request)ioServer.readObj();
+                    System.out.println(table.getNew_map().size());
+                    res= ResourceBundle.getBundle("Client.Resources.ProgramResources",locales[0]);
+                    mainWindow=new MainWindow(locales,cmdWriter,table,res);
+                    mainWindow.setUserInfo(login);
+                    mainWindow.setVisible(true);
+                }else if(sb.toString().equals("Неверное имя пользователя или пароль")){
+                    JOptionPane.showMessageDialog(component,sb.toString(),"ОШИБКА", JOptionPane.ERROR_MESSAGE);
+                    loginWindow.setVisible(false);
+                }
+                else if (sb.toString().equals("Пользователь "+login+" зарегистрирован")){
                     action="sign_in";
+                    register.setVisible(false);
+                }
+                else {
+                    JOptionPane.showMessageDialog(component,sb.toString(),"ОШИБКА", JOptionPane.ERROR_MESSAGE);
                     register.setVisible(false);
                 }
             }
@@ -81,11 +116,18 @@ public class User {
         }
     }
 
-    public char[] getPassword() {
+    public static char[] getPassword() {
         return password;
     }
 
-    public String getLogin() {
+    public static String getLogin() {
         return login;
+    }
+
+    public static Request getTable() {
+        return table;
+    }
+    public MainWindow getMain(){
+        return mainWindow;
     }
 }

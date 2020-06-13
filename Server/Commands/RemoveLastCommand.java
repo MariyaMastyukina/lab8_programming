@@ -18,6 +18,7 @@ public class RemoveLastCommand implements Command {
     private CollectWorker coll;
     static Logger LOGGER;
     TypeCommand type;
+    static int argsSize;
     /**
      * Конструктор - создание нового объекта с определенными значениями
      * @param p- переменная для управления командами
@@ -28,6 +29,7 @@ public class RemoveLastCommand implements Command {
         this.coll=collection;
         LOGGER=Logger.getLogger(RemoveByIdCommand.class.getName());
         type=TypeCommand.EDIT;
+        argsSize=0;
 
     }
     /**
@@ -41,14 +43,23 @@ public class RemoveLastCommand implements Command {
             if (id!=0) {
                 CollectionDB.removeIDBD(id, user.getLogin());
                 coll.remove_last(user.getLogin());
-                return new Request("Команда remove_last выполнена. Последний элемент коллекции удален",coll.getCollection());
+                return new Request("Команда remove_last выполнена. Последний элемент коллекции удален",coll.getCollection(),null);
             }
             else{
-                return new Request("Команда remove_last не выполнена, так как вы не создали ни один объект",coll.getCollection());
+                return new Request("Команда remove_last не выполнена, так как вы не создали ни один объект",null,null);
             }
     }
         else {
-            return new Request("Команда remove_last не выполнена. Коллекция пуста, удаление невозможно",coll.getCollection());
+            return new Request("Команда remove_last не выполнена. Коллекция пуста, удаление невозможно",null,null);
         }
         }
+    @Override
+    public String getName() {
+        return "remove_last";
+    }
+
+    @Override
+    public int getargsSize() {
+        return argsSize;
+    }
 }

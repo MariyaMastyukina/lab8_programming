@@ -1,11 +1,16 @@
 package Client;
 
+import Client.GUI.MainWindow;
 import Server.Collection.Climate;
 import Server.Collection.Government;
+import Server.Request;
 
+import javax.swing.*;
+import java.awt.*;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.PipedWriter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -17,14 +22,12 @@ import java.util.logging.Logger;
  */
 public class TransferObject {
     static Logger LOGGER;
-    String answer = null;
-
     private IOInterfaceStream ioServer;
-    private IOInterfaceStream ioClient;
     private ServerConnection serverConnection;
-    public TransferObject(IOInterfaceStream ioServer, IOInterfaceStream ioClient, ServerConnection serverConnection){
+    private Component component;
+    public TransferObject(IOInterfaceStream ioServer, ServerConnection serverConnection, Component component){
+        this.component=component;
         this.ioServer=ioServer;
-        this.ioClient=ioClient;
         this.serverConnection=serverConnection;
         LOGGER=Logger.getLogger(TransferObject.class.getName());
     }
@@ -32,8 +35,7 @@ public class TransferObject {
      * Функция для отправки на сервер объекта и получения ответа
      * @param command-команда
      */
-    public String transfer(CommandObject command) throws IOException, ClassNotFoundException {
-        LOGGER.log(Level.INFO,"Проверяем команду на execute_script");
+    public void transfer(CommandObject command) throws IOException, ClassNotFoundException {
         if (command.getNameCommand().equals("execute_script")){
             File file = new File(command.getOption());
             if(file.exists()) {
@@ -55,12 +57,12 @@ public class TransferObject {
                                     if (x > -375F) {
                                         checker1 = false;
                                     } else {
-                                        ioClient.writeln("В файле указано неверное значение. Значение не может быть меньше -375, координата города Х по умолчанию устанавливается 0");
+                                        MainWindow.addAnswer("В файле указано неверное значение. Значение не может быть меньше -375, координата города Х по умолчанию устанавливается 0");
                                         x = 0F;
                                         checker1 = false;
                                     }
                                 } catch (NumberFormatException e) {
-                                    ioClient.writeln("В файле указан неверный формат.Координата города Х по умолчанию устанавливается 0");
+                                    MainWindow.addAnswer("В файле указан неверный формат.Координата города Х по умолчанию устанавливается 0");
                                     x = 0F;
                                     checker1 = false;
                                 }
@@ -74,12 +76,12 @@ public class TransferObject {
                                     if (y > -966) {
                                         checker2 = false;
                                     } else {
-                                        ioClient.writeln("В файле указан неверное значение. Значение не может быть меньше -966, координата города Y по умолчанию устанавливается 0");
+                                        MainWindow.addAnswer("В файле указан неверное значение. Значение не может быть меньше -966, координата города Y по умолчанию устанавливается 0");
                                         y = 0;
                                         checker2 = false;
                                     }
                                 } catch (NumberFormatException e) {
-                                    ioClient.writeln("В файле указан неверный формат.Координата города Y по умолчанию устанавливается 0");
+                                    MainWindow.addAnswer("В файле указан неверный формат.Координата города Y по умолчанию устанавливается 0");
                                     y = 0;
                                     checker2 = false;
                                 }
@@ -93,12 +95,12 @@ public class TransferObject {
                                     if (area > 0) {
                                         checker3 = false;
                                     } else {
-                                        ioClient.writeln("В файле указано неверное значение. Значение не может быть отрицательным или равным 0, площадь города по умолчанию устанавливается 1.0");
+                                        MainWindow.addAnswer("В файле указано неверное значение. Значение не может быть отрицательным или равным 0, площадь города по умолчанию устанавливается 1.0");
                                         area = 1.0;
                                         checker3 = false;
                                     }
                                 } catch (NumberFormatException e) {
-                                    ioClient.writeln("В файле указан неверный формат.Площадь города по умолчанию устанавливается 1.0");
+                                    MainWindow.addAnswer("В файле указан неверный формат.Площадь города по умолчанию устанавливается 1.0");
                                     area = 1.0;
                                     checker3 = false;
                                 }
@@ -112,12 +114,12 @@ public class TransferObject {
                                     if (population > 0) {
                                         checker4 = false;
                                     } else {
-                                        ioClient.writeln("В файле указано неверное значение. Значение не может быть отрицательным или равным 0, население города по умолчанию устанавливается 1");
+                                        MainWindow.addAnswer("В файле указано неверное значение. Значение не может быть отрицательным или равным 0, население города по умолчанию устанавливается 1");
                                         population = 1;
                                         checker4 = false;
                                     }
                                 } catch (NumberFormatException e) {
-                                    ioClient.writeln("В файле указан неверный формат.Население города по умолчанию устанавливается 1");
+                                    MainWindow.addAnswer("В файле указан неверный формат.Население города по умолчанию устанавливается 1");
                                     population = 1;
                                     checker4 = false;
                                 }
@@ -130,7 +132,7 @@ public class TransferObject {
                                     metersAboveSeaLevel = Integer.parseInt(scanner.nextLine());
                                     checker5 = false;
                                 } catch (NumberFormatException e) {
-                                    ioClient.writeln("В файле указан неверный формат.Уровень города над морем по умолчанию устанавливается 0");
+                                    MainWindow.addAnswer("В файле указан неверный формат.Уровень города над морем по умолчанию устанавливается 0");
                                     metersAboveSeaLevel = 0;
                                     checker5 = false;
                                 }
@@ -144,7 +146,7 @@ public class TransferObject {
                                     capital = Boolean.parseBoolean(str);
                                     checker6 = false;
                                 } else {
-                                    ioClient.writeln("В файле указано неверное значение. По умолчанию город не является столицей");
+                                    MainWindow.addAnswer("В файле указано неверное значение. По умолчанию город не является столицей");
                                     capital = false;
                                     checker6 = false;
                                 }
@@ -164,7 +166,7 @@ public class TransferObject {
                                     climate = Climate.TUNDRA;
                                     checker7 = false;
                                 } else {
-                                    ioClient.writeln("В файле указано неверное значение. По умолчанию климат города HUMIDCONTINENTAL");
+                                    MainWindow.addAnswer("В файле указано неверное значение. По умолчанию климат города HUMIDCONTINENTAL");
                                     climate = Climate.HUMIDCONTINENTAL;
                                     checker7 = false;
                                 }
@@ -184,7 +186,7 @@ public class TransferObject {
                                     government = Government.OLIGARCHY;
                                     checker8 = false;
                                 } else {
-                                    ioClient.writeln("В файле указано неверное значение. По умолчанию правительство города CORPORATOCRACY");
+                                    MainWindow.addAnswer("В файле указано неверное значение. По умолчанию правительство города CORPORATOCRACY");
                                     government = Government.CORPORATOCRACY;
                                     checker8 = false;
                                 }
@@ -206,7 +208,7 @@ public class TransferObject {
                                     checker9 = false;
                                     nameGovernor = line;
                                 } else {
-                                    ioClient.writeln("В файле указано неверное имя губернатора. Имя губернатора не вводится");
+                                    MainWindow.addAnswer("В файле указано неверное имя губернатора. Имя губернатора не вводится");
                                     nameGovernor = "";
                                     checker9 = false;
                                 }
@@ -219,13 +221,11 @@ public class TransferObject {
                         }
                     }
                 } else {
-                    ioClient.writeln("Чтение из файлa " + command.getOption() + " невозможно, выполнение команды execute_script невозможно. Измените права.");
-                    return answer ;
+                    JOptionPane.showMessageDialog(component,"Чтение из файлa " + command.getOption() + " невозможно, выполнение команды execute_script невозможно. Измените права.","ОШИБКА", JOptionPane.ERROR_MESSAGE);
                 }
             }
             else{
-                ioClient.writeln("Файл не существует, выполнение команды execute_script невозможно");
-                return answer;
+                JOptionPane.showMessageDialog(component,"Файл не существует, выполнение команды execute_script невозможно","ОШИБКА", JOptionPane.ERROR_MESSAGE);
             }
         }
         else{
@@ -237,27 +237,25 @@ public class TransferObject {
         LOGGER.log(Level.INFO,"Ждем готовности сервера");
         while (!ioServer.ready()){
             long endTime=System.currentTimeMillis();
-            if (endTime-startTime>20000){
-                ioClient.writeln("Сервер недоступен, завершение работы программы");
+            if (endTime-startTime>5000){
+                JOptionPane.showMessageDialog(component,"Сервер недоступен, завершение работы программы","ОШИБКА", JOptionPane.ERROR_MESSAGE);
                 serverConnection.close();
                 System.exit(0);
             }
         }
         LOGGER.log(Level.INFO,"Получаем ответ сервера на отправленную команду");
-        LOGGER.log(Level.INFO, "Выводим ответ сервера на консоль");
         while (ioServer.ready()) {
-                    answer = ioServer.readLine();
-                    if (answer.equals("exit")) {
-                        ioServer.close();
-                        serverConnection.close();
-                        LOGGER.log(Level.INFO, "Завершение работы приложения");
-                        System.exit(1);
+            LOGGER.log(Level.INFO, "Выводим ответ сервера на консоль");
+            Request request=(Request) ioServer.readObj();
+            System.out.println(request.getAnswer());
+                    MainWindow.addAnswer(request.getAnswer());
+                    if (request.getNew_map()!=null){
+                        //updateTable();
+                        //updateVisual();
                     }
-                    ioClient.writeln(answer);
                 }
 
             }
         }
-        return answer;
     }
 }

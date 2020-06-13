@@ -15,4 +15,6 @@ public interface Command {
      * Функция выполнения команды
      */
     Request execute(CommandObject CO) throws IOException, SQLException, NoSuchAlgorithmException;
+    String getName();
+    int getargsSize();
 }
