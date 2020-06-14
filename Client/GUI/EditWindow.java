@@ -46,6 +46,44 @@ public class EditWindow extends JDialog {
     private HashMap<String, Object> defaultValues;
 
     public EditWindow(HashMap<String, Object> defaultValues, PipedWriter cmdWriter, ResourceBundle res) {
+        editPanel.setLayout(new GridLayout(14,1,3,5));
+        climateBox.addItem("");
+        climateBox.addItem("HUMIDCONTINENTAL");
+        climateBox.addItem("SUBARCTIC");
+        climateBox.addItem("TUNDRA");
+        capitalBox.addItem("");
+        capitalBox.addItem("true");
+        capitalBox.addItem("false");
+        governmentBox.addItem("");
+        governmentBox.addItem("CORPORATOCRACY");
+        governmentBox.addItem("MERITOCRACY");
+        governmentBox.addItem("OLIGARCHY");
+        editPanel.add(idLocLabel);
+        editPanel.add(idLabel);
+        editPanel.add(nameLabel);
+        editPanel.add(nameField);
+        editPanel.add(xLabel);
+        editPanel.add(xField);
+        editPanel.add(yLabel);
+        editPanel.add(yField);
+        editPanel.add(timeLocLabel);
+        editPanel.add(timeLabel);
+        editPanel.add(areaLabel);
+        editPanel.add(areaField);
+        editPanel.add(populationLabel);
+        editPanel.add(populationField);
+        editPanel.add(metersLabel);
+        editPanel.add(metersField);
+        editPanel.add(capitalLabel);
+        editPanel.add(capitalBox);
+        editPanel.add(climateLabel);
+        editPanel.add(climateBox);
+        editPanel.add(governmentLabel);
+        editPanel.add(governmentBox);
+        editPanel.add(governorLabel);
+        editPanel.add(governorField);
+        editPanel.add(ownerLocLabel);
+        editPanel.add(ownerLabel);
         this.defaultValues = defaultValues;
         this.cmdWriter = cmdWriter;
         if (defaultValues.get(res.getString("climate")) != null) {
@@ -64,6 +102,7 @@ public class EditWindow extends JDialog {
         else{
             capitalBox.setSelectedItem("");
         }
+        nameField.setText(defaultValues.get(res.getString("name")).toString());
         ownerLabel.setText(defaultValues.get(res.getString("owner")).toString());
         timeLabel.setText(defaultValues.get(res.getString("time")).toString());
         idLabel.setText(defaultValues.get(res.getString("id")).toString());
@@ -86,13 +125,22 @@ public class EditWindow extends JDialog {
         climateLabel.setText(res.getString("climate"));
         governmentLabel.setText(res.getString("government"));
         governorLabel.setText(res.getString("governor"));
+        setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         ClearListener clearListener = new ClearListener();
         UpdateListener updateListener = new UpdateListener(this);
+        removeElementButton.setText(res.getString("removeElement"));
+        applyChangesButton.setText(res.getString("applyChanges"));
         removeElementButton.addActionListener(clearListener);
         applyChangesButton.addActionListener(updateListener);
-        pack();
+        JPanel panel=new JPanel(new GridLayout(1,2));
+        panel.add(removeElementButton);
+        panel.add(applyChangesButton);
+        add(editPanel,BorderLayout.CENTER);
+        add(panel,BorderLayout.SOUTH);
+        Toolkit toolkit=Toolkit.getDefaultToolkit();
+        Dimension screen = toolkit.getScreenSize();
+        setSize(screen.width / 3, screen.height / 2);
         setVisible(true);
-        setDefaultCloseOperation(DISPOSE_ON_CLOSE);
     }
     EditWindow (City city, PipedWriter cmdWriter, ResourceBundle res){
         editPanel.setLayout(new GridLayout(14,1,3,5));
@@ -150,6 +198,7 @@ public class EditWindow extends JDialog {
         else{
             capitalBox.setSelectedItem("");
         }
+        nameField.setText(city.getNameCity());
         ownerLabel.setText(city.getUser());
         timeLabel.setText(city.getCreationDate().toString());
         idLabel.setText(String.valueOf(city.getIdOfCity()));
@@ -176,6 +225,8 @@ public class EditWindow extends JDialog {
         UpdateListener updateListener = new UpdateListener(this);
         removeElementButton.addActionListener(clearListener);
         applyChangesButton.addActionListener(updateListener);
+        removeElementButton.setText(res.getString("removeElement"));
+        applyChangesButton.setText(res.getString("applyChanges"));
         JPanel panel=new JPanel(new GridLayout(1,2));
         panel.add(removeElementButton);
         panel.add(applyChangesButton);
@@ -184,6 +235,8 @@ public class EditWindow extends JDialog {
         Toolkit toolkit=Toolkit.getDefaultToolkit();
         Dimension screen = toolkit.getScreenSize();
         setSize(screen.width / 3, screen.height / 2);
+        setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+        setVisible(true);
     }
     public class ClearListener implements ActionListener {
 
@@ -214,14 +267,13 @@ public class EditWindow extends JDialog {
                     cmdWriter.write(nameField.getText() + "\n");
                     cmdWriter.write(xField.getText() + "\n");
                     cmdWriter.write(yField.getText() + "\n");
-                    cmdWriter.write(timeLabel.getText() + "\n");
                     cmdWriter.write(areaField.getText() + "\n");
                     cmdWriter.write(populationField.getText() + "\n");
                     cmdWriter.write(metersField.getText() + "\n");
-                    cmdWriter.write(capitalBox.getSelectedObjects().toString() + "\n");
+                    cmdWriter.write(capitalBox.getSelectedItem().toString() + "\n");
                     cmdWriter.write(climateBox.getSelectedItem().toString() + "\n");
                     cmdWriter.write(governmentBox.getSelectedItem().toString() + "\n");
-                    cmdWriter.write(ownerLabel.getText() + "\n");
+                    cmdWriter.write(governorField.getText()+"\n");
                     cmdWriter.flush();
                 }
             } catch (IOException ex) {

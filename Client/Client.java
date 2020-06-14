@@ -54,7 +54,8 @@ public class Client {
             String line = brcmd.readLine();
                     if (line.equals("exit ")){
                         user.getMain().setVisible(false);
-                        User.createUser(ioServer,app,cmdWriter);
+                        user=User.createUser(ioServer,app,cmdWriter);
+                        transferObject=new TransferObject(ioServer,serverConnection,user.getMain());
                         continue;
                     }
                     if (line.equals("add") || line.contains("update")){

@@ -25,11 +25,13 @@ public class TransferObject {
     private IOInterfaceStream ioServer;
     private ServerConnection serverConnection;
     private Component component;
+    private MainWindow mainWindow;
     public TransferObject(IOInterfaceStream ioServer, ServerConnection serverConnection, Component component){
         this.component=component;
         this.ioServer=ioServer;
         this.serverConnection=serverConnection;
         LOGGER=Logger.getLogger(TransferObject.class.getName());
+        mainWindow=(MainWindow) component;
     }
     /**
      * Функция для отправки на сервер объекта и получения ответа
@@ -249,9 +251,10 @@ public class TransferObject {
             Request request=(Request) ioServer.readObj();
             System.out.println(request.getAnswer());
                     MainWindow.addAnswer(request.getAnswer());
+            System.out.println(mainWindow);
                     if (request.getNew_map()!=null){
-                        //updateTable();
-                        //updateVisual();
+                        mainWindow.getTableModel().updateTable(request.getNew_map());
+                        mainWindow.getVisualPanel().updateVisual(request.getNew_map());
                     }
                 }
 

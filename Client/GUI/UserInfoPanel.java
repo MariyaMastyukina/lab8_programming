@@ -41,11 +41,13 @@ public class UserInfoPanel extends JPanel{
         JPanel panel2=new JPanel(new GridLayout(1,2));
         table.setText(res.getString("table"));
         table.addActionListener(e -> {
-
+            CardLayout layout=(CardLayout)(frame.cardLayout.getLayout());
+            layout.show(frame.cardLayout,"Таблица");
         });
         visual.setText(res.getString("visual"));
         visual.addActionListener(e -> {
-
+            CardLayout layout=(CardLayout)(frame.cardLayout.getLayout());
+            layout.show(frame.cardLayout,"Визуализация");
         });
         panel2.add(table,BorderLayout.WEST);
         panel2.add(visual,BorderLayout.CENTER);

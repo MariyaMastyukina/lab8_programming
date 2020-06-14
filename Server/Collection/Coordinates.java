@@ -2,6 +2,7 @@ package Server.Collection;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Класс координат со свойствами x y.
@@ -46,4 +47,13 @@ public class Coordinates implements Serializable{
         return "x=" + this.getX()+"\n" +
                 "y=" + this.getY();
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        Coordinates that = (Coordinates) o;
+        return Float.compare(that.getX(), x) == 0 &&
+                y == that.getY();
+    }
+
 }

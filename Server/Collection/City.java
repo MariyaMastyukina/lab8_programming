@@ -7,6 +7,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Класс города со свойствами id, name, coordiantes, creationDate, area, population, metersAboveSeaLevel, capital, climate, government, governor.
@@ -21,13 +22,13 @@ public class City implements Serializable {
     /** Поле дата создания*/
     private LocalDateTime creationDate; //Поле не может быть null, Значение этого поля должно генерироваться автоматически
     /** Поле площадь*/
-    private Double area; //Значение поля должно быть больше 0, Поле не может быть null
+    private double area; //Значение поля должно быть больше 0, Поле не может быть null
     /** Поле население*/
-    private Integer population; //Значение поля должно быть больше 0, Поле не может быть null
+    private int population; //Значение поля должно быть больше 0, Поле не может быть null
     /** Поле метры на уровнем моря*/
-    private Integer metersAboveSeaLevel;
+    private int metersAboveSeaLevel;
     /** Поле столица*/
-    private Boolean capital; //Поле может быть null
+    private boolean capital; //Поле может быть null
     /** Поле климат*/
     private Climate climate; //Поле может быть null
     /** Поле правительство*/
@@ -163,6 +164,25 @@ public class City implements Serializable {
         this.id = id;
     }
     public Object[] getDataRow(){
-        return new Object[]{id, name,coordinates.getX(),coordinates.getY(),creationDate,area,population,metersAboveSeaLevel,capital,climate,government,governor};
+        return new Object[]{id, name,coordinates.getX(),coordinates.getY(),creationDate,area,population,metersAboveSeaLevel,capital,climate,government,governor,user};
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        City city = (City) o;
+        return id == city.id &&
+                name.equals(city.getNameCity()) &&
+                coordinates.equals(city.getCoordinates()) &&
+                creationDate.equals(city.getCreationDate()) &&
+                area==city.getArea() &&
+                population==city.getPopulation() &&
+                metersAboveSeaLevel==city.getMetersAboveSeaLevel()&&
+                capital==city.getCapital() &&
+                climate == city.getClimate() &&
+                government == city.getGovernment() &&
+                governor.equals(city.getGovernor()) &&
+                user.equals(city.getUser());
+    }
+
 }

@@ -113,6 +113,7 @@ public class AddWindow extends JDialog {
             try {
                 checker=checkFields(component);
                 if (checker) {
+                    System.out.println(command);
                     cmdWriter.write(command+"\n");
                     cmdWriter.write(nameField1.getText() + "\n");
                     cmdWriter.write(xField2.getText() + "\n");

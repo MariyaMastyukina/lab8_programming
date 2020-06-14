@@ -18,6 +18,7 @@ public class VisualObjectPanel extends JPanel{
     private CopyOnWriteArrayList<City> buffMap;
     private PipedWriter cmdWriter;
     private ResourceBundle res;
+    private boolean checker=true;
 
     public VisualObjectPanel(Request table, PipedWriter cmdWriter, ResourceBundle res ){
         this.cmdWriter = cmdWriter;
@@ -29,13 +30,13 @@ public class VisualObjectPanel extends JPanel{
     public void setRes(ResourceBundle res){
         this.res = res;
     }
-
     public void updateVisual(CopyOnWriteArrayList<City> list) {
-            panelSize = new Dimension(500/2, 500/2);
+            panelSize = new Dimension(200, 200);
             setLayout(layout = new SpringLayout());
-            Pair<ArrayList<Long>, LinkedList<City>> pair = compareLists(list);
-            ArrayList<Long> ID = pair.getKey();
-            LinkedList<City> newCities = pair.getValue();
+            ArrayList<Long> ID = getdeletedID(list);
+            LinkedList<City> newCities = getnewElements(list);
+        System.out.println(list.size());
+        System.out.println(localList.size());
             if(list.size()==localList.size()) {
                 removeAll();
                 for (City e : list) {
@@ -52,13 +53,14 @@ public class VisualObjectPanel extends JPanel{
                         System.out.println("FFFF");
                         addPoint(e);
                     }
+                    checker=false;
                 }
 
             localList = list;
             revalidate();
             for (int i=0;i<getComponentCount();i++){
-                ObjectButton button=(ObjectButton)getComponent(i);
-                layout.putConstraint(SpringLayout.WEST, button, button.getXButton(), SpringLayout.WEST, this);
+                ObjectButton button=(ObjectButton) getComponent(i);
+                layout.putConstraint(SpringLayout.WEST, button,button.getXButton(), SpringLayout.WEST, this);
                 layout.putConstraint(SpringLayout.NORTH, button, button.getYButton(), SpringLayout.NORTH, this);
             }
     }
@@ -81,7 +83,13 @@ public class VisualObjectPanel extends JPanel{
         } else diam = 100;
         Integer x=city.getCoordinates().getX().intValue() % panelSize.width+panelSize.width;
         Integer y=city.getCoordinates().getY() % panelSize.height +panelSize.height;
-        ObjectButton button = new ObjectButton(city,city.getIdOfCity(), diam,x,y);
+        ObjectButton button;
+        if (checker) {
+             button= new ObjectButton(city, city.getIdOfCity(), diam, x, y,diam);
+        }
+        else{
+            button= new ObjectButton(city, city.getIdOfCity(), diam, x, y,0);
+        }
         button.addActionListener(e-> {
             if (city.getUser().equals(User.getLogin())){
                 new EditWindow(city, cmdWriter, res);
@@ -89,15 +97,12 @@ public class VisualObjectPanel extends JPanel{
             else new InfoWindow(city, res);
         });
         add(button);
-        layout.putConstraint(SpringLayout.WEST, button, x, SpringLayout.WEST, this);
-        layout.putConstraint(SpringLayout.NORTH, button, y, SpringLayout.NORTH, this);
+//        layout.putConstraint(SpringLayout.WEST, button, button.getXButton(), SpringLayout.WEST, this);
+//        layout.putConstraint(SpringLayout.NORTH, button, button.getYButton(), SpringLayout.NORTH, this);
     }
 
-    public Pair<ArrayList<Long>, LinkedList<City>> compareLists(CopyOnWriteArrayList<City> newList){
-        System.out.println("CompareMApsCheck");
+    public ArrayList<Long> getdeletedID(CopyOnWriteArrayList<City> newList){
         ArrayList<Long> deletedID = new ArrayList<>();
-        LinkedList<City> newElements = new LinkedList<>();
-        Pair<ArrayList<Long>, LinkedList<City>> pair = new Pair<>(deletedID,newElements);
         for(City oldList : localList){
             boolean checker=false;
             Long id=oldList.getIdOfCity();
@@ -106,6 +111,10 @@ public class VisualObjectPanel extends JPanel{
             }
             if (!checker) deletedID.add(id);
         }
+        return deletedID;
+    }
+    public LinkedList<City> getnewElements(CopyOnWriteArrayList<City> newList){
+        LinkedList<City> newElements = new LinkedList<>();
         for(City newL:newList){
             boolean checker=false;
             for (City oldL: localList){
@@ -113,6 +122,6 @@ public class VisualObjectPanel extends JPanel{
             }
             if (!checker) newElements.add(newL);
         }
-        return pair;
+        return newElements;
     }
 }

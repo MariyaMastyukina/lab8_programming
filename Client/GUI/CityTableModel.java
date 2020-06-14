@@ -4,39 +4,49 @@ import Server.Collection.City;
 import Server.Request;
 
 import javax.swing.table.AbstractTableModel;
+import javax.swing.table.DefaultTableModel;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.ResourceBundle;
 import java.util.Vector;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-public class CityTableModel extends AbstractTableModel {
+public class CityTableModel extends DefaultTableModel {
     private Vector<String>columns;
     private Vector<Vector<Object>> data=new Vector<>();
     CityTableModel(ResourceBundle res, Request table){
         changeColumns(res);
         updateTable(table.getNew_map());
+//        System.out.println(columns.get(0));
     }
     public void changeColumns(ResourceBundle res){
         columns=new Vector<>(Arrays.asList(
-                res.getString("id"),
-                res.getString("name"),
-                res.getString("x"),
-                res.getString("y"),
-                res.getString("time"),
-                res.getString("area"),
-                res.getString("population"),
-                res.getString("meters"),
-                res.getString("capital"),
-                res.getString("climate"),
-                res.getString("government"),
-                res.getString("governor"),
-                res.getString("owner")
-        ));
+                "id",
+                "name",
+                "x",
+                "y",
+                "time",
+                "area",
+                "population",
+                "meters",
+                "capital",
+                "climate",
+                "government",
+                "governor",
+                "owner"
+                ));
+    }
+
+    public Vector<String> getColumns() {
+        return columns;
     }
 
     @Override
     public int getRowCount() {
-        return data.size();
+        if (data!=null){
+            return data.size();
+        }
+        return 0;
     }
 
     @Override
@@ -48,11 +58,14 @@ public class CityTableModel extends AbstractTableModel {
     public Object getValueAt(int rowIndex, int columnIndex) {
         return data.get(rowIndex).get(columnIndex);
     }
-    public void updateTable(CopyOnWriteArrayList<City> list){
+    public Vector<Vector<Object>> updateTable(CopyOnWriteArrayList<City> list){
         data=new Vector<>();
         for (City e:list){
-            data.add(new Vector<>(Arrays.asList(e.getDataRow())));
+            Vector<Object> row=new Vector<>(Arrays.asList(e.getDataRow()));
+            data.add(row);
         }
         fireTableDataChanged();
+        return data;
     }
+
 }

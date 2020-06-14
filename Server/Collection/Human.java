@@ -1,6 +1,7 @@
 package Server.Collection;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 /**
  * Класс человека со свойством name.
@@ -24,4 +25,16 @@ public class Human implements Serializable{
     public String toString(){
         return this.name;
     }
+
+    public String getName() {
+        return name;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        Human human = (Human) o;
+        return name.equals(human.getName());
+    }
+
 }

@@ -61,6 +61,7 @@ public class ButtonPanel extends JPanel{
             try {
             ResourceBundle res=ResourceBundle.getBundle("Client.Resources.ButtonResources");
             if (res.getString(e.getActionCommand()).equals("add")){
+                read.setCommand("add");
                 read.prepare();
             }
             else {

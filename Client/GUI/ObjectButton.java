@@ -8,62 +8,75 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.geom.Ellipse2D;
+import java.awt.geom.Rectangle2D;
 import java.util.HashMap;
 
 public class ObjectButton extends JButton implements ActionListener {
     City city;
     long id;
     Timer timer=new Timer(10,this);
-    Integer currentDiam=0;
-    Integer diam,red,green,blue,x,y;
+    Integer currentDiam;
+    int diam,red,green,blue,x,y;
     boolean grow=true;
     boolean decrease=false;
-    ObjectButton(City city, long id,Integer diam, Integer x, Integer y){
+    Color color;
+    ObjectButton(City city, long id,Integer diam, Integer x, Integer y,Integer currentDiam){
         this.city=city;
         this.id=id;
         this.diam=diam;
         this.x=x;
+        this.currentDiam=currentDiam;
+        System.out.println(currentDiam);
         this.y=y;
-        Dimension size=new Dimension(diam,diam);
-        setPreferredSize(size);
-        setContentAreaFilled(false);
-        red = city.getUser().hashCode()*30%255;
-        green = city.getUser().hashCode()*20%255;
-        blue = city.getUser().hashCode()*70%255;
+        setOpaque(true);
+        red = city.getUser().hashCode()*3%255;
+        green = city.getUser().hashCode()*2%255;
+        blue = city.getUser().hashCode()*7%255;
         timer.start();
     }
+
     public void remove(){
         decrease=true;
-//        grow=true;
+        grow=false;
     }
     public long getID(){
         return id;
     }
 
 
-    @Override
-    protected void paintComponent(Graphics g) {
-        if (getModel().isArmed()){
-            g.setColor(Color.yellow);
-        }
-        else{
-            g.setColor(Color.red);
-        }
-        g.setColor(new Color(red,green,blue));
-        g.fillOval(0,0,currentDiam,currentDiam);
-        super.paintComponent(g);
-    }
+//    @Override
+//    protected void paintComponent(Graphics g) {
+//        Graphics2D g2=(Graphics2D)g;
+//        g2.setColor(new Color(230, 57, 103));
+//
+//        if (currentDiam==0){
+//            decrease=false;
+//            if (!grow)setVisible(false);
+//        }
+//        if (decrease && !grow) currentDiam=-1;
+//        Ellipse2D ellipse= new Ellipse2D.Double(0,0,currentDiam,currentDiam);
+//        g2.fill(ellipse);
+//
+//////        g.drawOval(x,y,currentDiam,currentDiam);
+////        super.paintComponent(g2);
+//    }
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        if (currentDiam>=diam) grow=false;
-        if (currentDiam==0){
-            decrease=false;
-            if (!grow)setVisible(false);
+        if (currentDiam<=diam && grow) {
+            currentDiam += 1;
+            Dimension size = new Dimension(currentDiam, currentDiam);
+            setBackground(new Color(red, green, blue));
+            setPreferredSize(size);
+            repaint();
         }
-        if (grow) currentDiam=+1;
-        if (decrease) currentDiam=-1;
-        repaint();
+        if (currentDiam>0 && decrease){
+            currentDiam -= 1;
+            Dimension size = new Dimension(currentDiam, currentDiam);
+            setBackground(new Color(red, green, blue));
+            setPreferredSize(size);
+            repaint();
+        }
     }
 
     public Integer getXButton() {
