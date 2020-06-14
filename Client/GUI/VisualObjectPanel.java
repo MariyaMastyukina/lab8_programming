@@ -37,14 +37,6 @@ public class VisualObjectPanel extends JPanel{
             LinkedList<City> newCities = getnewElements(list);
         System.out.println(list.size());
         System.out.println(localList.size());
-            if(list.size()==localList.size()) {
-                removeAll();
-                for (City e : list) {
-                    addPoint(e);
-                    System.out.println("F");
-                }
-            }
-            else{
                     for (Long remCity : ID) {
                         System.out.println("A");
                         removeByID(remCity);
@@ -54,7 +46,6 @@ public class VisualObjectPanel extends JPanel{
                         addPoint(e);
                     }
                     checker=false;
-                }
 
             localList = list;
             revalidate();

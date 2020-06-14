@@ -162,32 +162,62 @@ public class CollectWorker {
             return sb.toString();
         }
     }
-    public String print_ascending(){
-       if (collection.size()==0){
-           return "Команда print_ascending не выполнена. Коллекция пуста, сортировка невозможна";
-       }
-       else{
-           StringBuilder sb=new StringBuilder();
-           sb.append("Команда print_ascending выполнена. Коллекция, отсортированная по возрастанию поля-население города:").append("\n");
-           collection.stream().sorted(new CityComparator()).collect(Collectors.toCollection(LinkedList::new)).forEach(city -> {
-               sb.append(city.toString()).append("\n");
-           });
-           return sb.toString();
-       }
+    public CopyOnWriteArrayList<City> sort_population(){
+        StringBuilder sb=new StringBuilder();
+        sb.append("Команда print_ascending выполнена. Коллекция, отсортированная по возрастанию поля-население города:").append("\n");
+        CopyOnWriteArrayList<City> sortColl=collection.stream().sorted(new CityComparator()).collect(Collectors.toCollection(CopyOnWriteArrayList::new));
+        return sortColl;
     }
-    public String sort(){
-        if (collection.size()==0){
-            return "Команда sort не выполнена. Коллекция пуста, сортировка невозможна";
-        }
-        else{
+    public CopyOnWriteArrayList<City> sort_id(){
+        StringBuilder sb=new StringBuilder();
+        sb.append("Команда print_ascending выполнена. Коллекция, отсортированная по возрастанию поля-население города:").append("\n");
+        CopyOnWriteArrayList<City> sortColl=collection.stream().sorted(new IDComparator()).collect(Collectors.toCollection(CopyOnWriteArrayList::new));
+        return sortColl;
+    }
+    public CopyOnWriteArrayList<City> sort_area(){
             StringBuilder sb=new StringBuilder();
             Collections.sort(collection,new AreaComparartor());
-            sb.append("Команда sort выполнена. Коллекция отсортирована по возрастанию значения поля-площадь:").append("\n");
-            collection.forEach(city -> {
-                sb.append(city.toString()).append("\n");
-            });
-            return sb.toString();
-        }
+            return collection;
+    }
+    public CopyOnWriteArrayList<City> sort_name(){
+        CopyOnWriteArrayList<City> sortColl=collection.stream().sorted(new NameComparator()).collect(Collectors.toCollection(CopyOnWriteArrayList::new));
+        return sortColl;
+    }
+    public CopyOnWriteArrayList<City> sort_X(){
+        CopyOnWriteArrayList<City> sortColl=collection.stream().sorted(new XComparator()).collect(Collectors.toCollection(CopyOnWriteArrayList::new));
+        return sortColl;
+    }
+    public CopyOnWriteArrayList<City> sort_Y(){
+        CopyOnWriteArrayList<City> sortColl=collection.stream().sorted(new YComparator()).collect(Collectors.toCollection(CopyOnWriteArrayList::new));
+        return sortColl;
+    }
+    public CopyOnWriteArrayList<City> sort_date(){
+        CopyOnWriteArrayList<City> sortColl=collection.stream().sorted(new DateComparator()).collect(Collectors.toCollection(CopyOnWriteArrayList::new));
+        return sortColl;
+    }
+    public CopyOnWriteArrayList<City> sort_meters(){
+        CopyOnWriteArrayList<City> sortColl=collection.stream().sorted(new MetersComparator()).collect(Collectors.toCollection(CopyOnWriteArrayList::new));
+        return sortColl;
+    }
+    public CopyOnWriteArrayList<City> sort_capital(){
+        CopyOnWriteArrayList<City> sortColl=collection.stream().sorted(new CapitalComparator()).collect(Collectors.toCollection(CopyOnWriteArrayList::new));
+        return sortColl;
+    }
+    public CopyOnWriteArrayList<City> sort_climate(){
+        CopyOnWriteArrayList<City> sortColl=collection.stream().sorted(new ClimateComparator()).collect(Collectors.toCollection(CopyOnWriteArrayList::new));
+        return sortColl;
+    }
+    public CopyOnWriteArrayList<City> sort_government(){
+        CopyOnWriteArrayList<City> sortColl=collection.stream().sorted(new GovernmentComparator()).collect(Collectors.toCollection(CopyOnWriteArrayList::new));
+        return sortColl;
+    }
+    public CopyOnWriteArrayList<City> sort_governor(){
+        CopyOnWriteArrayList<City> sortColl=collection.stream().sorted(new GovernorComparator()).collect(Collectors.toCollection(CopyOnWriteArrayList::new));
+        return sortColl;
+    }
+    public CopyOnWriteArrayList<City> sort_user(){
+        CopyOnWriteArrayList<City> sortColl=collection.stream().sorted(new UserComparator()).collect(Collectors.toCollection(CopyOnWriteArrayList::new));
+        return sortColl;
     }
     public String history(ControlUnit pusk){
         return pusk.getListCommand();

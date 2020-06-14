@@ -114,6 +114,7 @@ public class AddWindow extends JDialog {
                 checker=checkFields(component);
                 if (checker) {
                     System.out.println(command);
+                    System.out.println(nameField1.getText()+xField2.getText()+yField3.getText()+areaField4.getText()+populationField5.getText()+metersField6.getText()+capitalBox2.getSelectedItem()+climateBox1.getSelectedItem().toString()+governmentBox3.getSelectedItem().toString()+governorField7.getText());
                     cmdWriter.write(command+"\n");
                     cmdWriter.write(nameField1.getText() + "\n");
                     cmdWriter.write(xField2.getText() + "\n");

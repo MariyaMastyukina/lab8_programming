@@ -37,7 +37,7 @@ public class PrintAscendingCommand implements Command {
     @Override
     public Request execute(CommandObject user) throws IOException {
         LOGGER.log(Level.INFO,"Отправка результата выполнения команды на сервер");
-        return new Request(coll.print_ascending(),null,null);
+        return null;
     }
 
     @Override

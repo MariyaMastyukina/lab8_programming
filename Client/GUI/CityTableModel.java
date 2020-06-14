@@ -17,7 +17,6 @@ public class CityTableModel extends DefaultTableModel {
     CityTableModel(ResourceBundle res, Request table){
         changeColumns(res);
         updateTable(table.getNew_map());
-//        System.out.println(columns.get(0));
     }
     public void changeColumns(ResourceBundle res){
         columns=new Vector<>(Arrays.asList(
@@ -25,7 +24,7 @@ public class CityTableModel extends DefaultTableModel {
                 "name",
                 "x",
                 "y",
-                "time",
+                "date",
                 "area",
                 "population",
                 "meters",
@@ -33,7 +32,7 @@ public class CityTableModel extends DefaultTableModel {
                 "climate",
                 "government",
                 "governor",
-                "owner"
+                "user"
                 ));
     }
 

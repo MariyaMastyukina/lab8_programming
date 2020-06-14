@@ -59,7 +59,5 @@ public class AutorizationWindow extends JFrame{
         panelButton.add(exit);
         add(panelButton,BorderLayout.SOUTH);
 }
-    public static void main(String[] args) throws IOException, ClassNotFoundException {
 
-    }
 }

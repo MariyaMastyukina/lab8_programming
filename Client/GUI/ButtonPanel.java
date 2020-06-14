@@ -27,7 +27,7 @@ public class ButtonPanel extends JPanel{
         parameterWindow=new ParameterWindow(frame, writer,res);
         simpleListener=new SimpleListener();
         notSimpleListener=new NotSimpleListener();
-        setLayout(new GridLayout(ControlUnit.getCommands().size()-2,1,3,5));
+        setLayout(new GridLayout(ControlUnit.getCommands().size()-1,1,3,5));
         Map<String,Command> commands=ControlUnit.getCommands();
         commands.remove("sign_in");
         commands.remove("check_in");
@@ -40,11 +40,13 @@ public class ButtonPanel extends JPanel{
                     addButton(command.getName(),simpleListener);
                 }
         }
+        addButton("execute_script",notSimpleListener);
     }
     public void addButton(String name, ActionListener listener){
         JButton button=new JButton(name);
         button.addActionListener(listener);
         button.setHorizontalAlignment(SwingConstants.CENTER);
+        button.setPreferredSize(new Dimension(200,500));
         buttons.put(name,button);
         add(button);
     }

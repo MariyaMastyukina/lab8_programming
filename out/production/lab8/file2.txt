@@ -1,0 +1,2 @@
+info
+execute_script file2.txt

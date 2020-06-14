@@ -76,7 +76,7 @@ public class City implements Serializable {
      * Функция получения значения поля {@link City#id}
      * @return возвращает id города
      */
-    public long getIdOfCity(){
+    public Long getIdOfCity(){
         return id;
     }
     /**

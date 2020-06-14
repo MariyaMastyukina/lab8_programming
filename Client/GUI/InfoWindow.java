@@ -67,21 +67,21 @@ class InfoWindow extends JDialog {
             infoPanel.add(governorLabel);
             infoPanel.add(ownerLocLabel);
             infoPanel.add(ownerLabel);
-            capitalLabel.setText(defaultValues.get(res.getString("capital")).toString());
-            timeLabel.setText(defaultValues.get(res.getString("time")).toString());
-            nameLabel.setText(defaultValues.get(res.getString("name")).toString());
-            idLabel.setText(defaultValues.get(res.getString("id")).toString());
-            xLabel.setText(defaultValues.get(res.getString("x")).toString());
-            yLabel.setText(defaultValues.get(res.getString("y")).toString());
-            areaLabel.setText(defaultValues.get(res.getString("area")).toString());
-            populationLabel.setText(defaultValues.get(res.getString("population")).toString());
-            metersLabel.setText(defaultValues.get(res.getString("meters")).toString());
-            if (defaultValues.get(res.getString("climate"))!=null) {
-                climateLabel.setText(defaultValues.get(res.getString("climate")).toString());
+            capitalLabel.setText(defaultValues.get("capital").toString());
+            timeLabel.setText(defaultValues.get("date").toString());
+            nameLabel.setText(defaultValues.get("name").toString());
+            idLabel.setText(defaultValues.get("id").toString());
+            xLabel.setText(defaultValues.get("x").toString());
+            yLabel.setText(defaultValues.get("y").toString());
+            areaLabel.setText(defaultValues.get("area").toString());
+            populationLabel.setText(defaultValues.get("population").toString());
+            metersLabel.setText(defaultValues.get("meters").toString());
+            if (defaultValues.get("climate")!=null) {
+                climateLabel.setText(defaultValues.get("climate").toString());
             } else climateLabel.setText("");
-            governmentLabel.setText(defaultValues.get(res.getString("government")).toString());
-            governorLabel.setText(defaultValues.get(res.getString("governor")).toString());
-            ownerLabel.setText(defaultValues.get(res.getString("owner")).toString());
+            governmentLabel.setText(defaultValues.get("government").toString());
+            governorLabel.setText(defaultValues.get("governor").toString());
+            ownerLabel.setText(defaultValues.get("user").toString());
             ownerLocLabel.setText(res.getString("owner"));
             timeLocLabel.setText(res.getString("time"));
             idLocLabel.setText(res.getString("id"));

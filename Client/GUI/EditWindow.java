@@ -86,32 +86,32 @@ public class EditWindow extends JDialog {
         editPanel.add(ownerLabel);
         this.defaultValues = defaultValues;
         this.cmdWriter = cmdWriter;
-        if (defaultValues.get(res.getString("climate")) != null) {
-            climateBox.setSelectedItem(defaultValues.get(res.getString("climate")).toString());
+        if (defaultValues.get("climate") != null) {
+            climateBox.setSelectedItem(defaultValues.get("climate").toString());
         } else {
             climateBox.setSelectedItem("");
         }
         if (defaultValues.get(res.getString("government")) != null) {
-            governmentBox.setSelectedItem(defaultValues.get(res.getString("government")).toString());
+            governmentBox.setSelectedItem(defaultValues.get("government").toString());
         } else {
             governmentBox.setSelectedItem("");
         }
-        if (defaultValues.get(res.getString("capital"))!=null){
-            capitalBox.setSelectedItem(defaultValues.get(res.getString("capital")).toString());
+        if (defaultValues.get("capital")!=null){
+            capitalBox.setSelectedItem(defaultValues.get("capital").toString());
         }
         else{
             capitalBox.setSelectedItem("");
         }
-        nameField.setText(defaultValues.get(res.getString("name")).toString());
-        ownerLabel.setText(defaultValues.get(res.getString("owner")).toString());
-        timeLabel.setText(defaultValues.get(res.getString("time")).toString());
-        idLabel.setText(defaultValues.get(res.getString("id")).toString());
-        xField.setText(defaultValues.get(res.getString("x")).toString());
-        yField.setText(defaultValues.get(res.getString("y")).toString());
-        areaField.setText(defaultValues.get(res.getString("area")).toString());
-        populationField.setText(defaultValues.get(res.getString("population")).toString());
-        metersField.setText(defaultValues.get(res.getString("meters")).toString());
-        governorField.setText(defaultValues.get(res.getString("governor")).toString());
+        nameField.setText(defaultValues.get("name").toString());
+        ownerLabel.setText(defaultValues.get("user").toString());
+        timeLabel.setText(defaultValues.get("date").toString());
+        idLabel.setText(defaultValues.get("id").toString());
+        xField.setText(defaultValues.get("x").toString());
+        yField.setText(defaultValues.get("y").toString());
+        areaField.setText(defaultValues.get("area").toString());
+        populationField.setText(defaultValues.get("population").toString());
+        metersField.setText(defaultValues.get("meters").toString());
+        governorField.setText(defaultValues.get("governor").toString());
         ownerLocLabel.setText(res.getString("owner"));
         timeLocLabel.setText(res.getString("time"));
         idLocLabel.setText(res.getString("id"));
@@ -275,6 +275,7 @@ public class EditWindow extends JDialog {
                     cmdWriter.write(governmentBox.getSelectedItem().toString() + "\n");
                     cmdWriter.write(governorField.getText()+"\n");
                     cmdWriter.flush();
+                    setVisible(false);
                 }
             } catch (IOException ex) {
                 ex.printStackTrace();

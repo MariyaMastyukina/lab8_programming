@@ -47,7 +47,7 @@ public class MainWindow extends JFrame {
         Dimension screen=kit.getScreenSize();
         setBounds(screen.width/5,screen.height/5,screen.width*4/5,screen.height*4/5);
         setLayout(new BorderLayout());
-        textArea=new JTextArea(10,50);
+        textArea=new JTextArea(5,50);
         JScrollPane scroll=new JScrollPane(textArea);
         add(scroll,BorderLayout.SOUTH);
         add(infopanel,BorderLayout.NORTH);
@@ -87,7 +87,7 @@ public class MainWindow extends JFrame {
         readCity.prepare();
     }
     public static void addAnswer(String message){
-        textArea.setText(message);
+        textArea.append(message+"\n");
     }
     public void setUserInfo(String user){
         infopanel.setUserLabel(user);

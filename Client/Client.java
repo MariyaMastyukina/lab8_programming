@@ -60,6 +60,7 @@ public class Client {
                     }
                     if (line.equals("add") || line.contains("update")){
                         argsAdd = new ArrayList<>();
+                        while(!brcmd.ready()){}
                         while (brcmd.ready()){
                             argsAdd.add(brcmd.readLine());
                         }

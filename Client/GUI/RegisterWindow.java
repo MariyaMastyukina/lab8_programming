@@ -36,8 +36,5 @@ public class RegisterWindow extends JFrame {
         });
         add(button,BorderLayout.SOUTH);
     }
-    public static void main(String[] args) {
-        RegisterWindow app = new RegisterWindow(null);
-        app.setVisible(true);
-    }
+
 }

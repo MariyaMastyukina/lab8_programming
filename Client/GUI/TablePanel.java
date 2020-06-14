@@ -13,6 +13,8 @@ import javax.swing.table.TableRowSorter;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.io.IOException;
 import java.io.PipedWriter;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -39,12 +41,14 @@ public class TablePanel extends JPanel {
     private TableRowSorter<CityTableModel> sorter;
     private JTextField ownerFilter=new JTextField();
     private JTextField nameFilter=new JTextField();
+    CityTableModel tableModel;
 
     public TablePanel(CityTableModel tableModel, PipedWriter cmdWriter, ResourceBundle res,Request list) {
         this.cmdWriter=cmdWriter;
         this.res=res;
         setLayout(new BorderLayout());
         setTable(list,tableModel);
+        this.tableModel=tableModel;
 //        table=new JTable(tableModel.updateTable();tableModel.changeColumns(res););
 //        table.setPreferredScrollableViewportSize(new Dimension(500, 70));
 //        table.setFillsViewportHeight(true);
@@ -109,7 +113,6 @@ public class TablePanel extends JPanel {
         @Override
         public void mouseClicked(MouseEvent e) {
             Point p=e.getPoint();
-
             int row=table.rowAtPoint(p);
             if (e.getClickCount()==1){
                 if (row!=-1) {
@@ -117,7 +120,7 @@ public class TablePanel extends JPanel {
                     for (int i = 0; i < table.getColumnCount(); i++) {
                         result.put(table.getColumnName(i), table.getValueAt(row, i));
                     }
-                    if (result.get(res.getString("owner")).equals(User.getLogin())) {
+                    if (result.get("user").equals(User.getLogin())) {
                         new EditWindow(result, cmdWriter, res);
                     } else {
                         new InfoWindow(result, res);
@@ -144,9 +147,26 @@ public class TablePanel extends JPanel {
         table.setPreferredScrollableViewportSize(new Dimension(500, 70));
         table.setFillsViewportHeight(true);
         sorter = new TableRowSorter<>(tableModel);
-        table.setRowSorter(sorter);
         table.addMouseListener(new ClickHandler());
+        table.setRowSorter(sorter);
+        table.setColumnSelectionAllowed(true);
         table.setDefaultRenderer(LocalDateTime.class, new DateRender(res.getLocale()));
+        table.getTableHeader().addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                Point p=e.getPoint();
+                int collumn=table.rowAtPoint(p);
+                if (e.getClickCount()==1){
+                    if (collumn!=-1) {
+                        try {
+                            cmdWriter.write("sort "+table.getColumnName(collumn));
+                        } catch (IOException ex) {
+                            ex.printStackTrace();
+                        }
+                    }
+                }
+            }
+        });
         JScrollPane scrollPane = new JScrollPane(table);
         add(scrollPane, BorderLayout.CENTER);
         return table;
