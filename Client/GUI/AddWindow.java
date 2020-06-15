@@ -6,6 +6,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.io.IOException;
 import java.io.PipedWriter;
 import java.util.ArrayList;
@@ -114,8 +116,8 @@ public class AddWindow extends JDialog {
                 checker=checkFields(component);
                 if (checker) {
                     System.out.println(command);
-                    System.out.println(nameField1.getText()+xField2.getText()+yField3.getText()+areaField4.getText()+populationField5.getText()+metersField6.getText()+capitalBox2.getSelectedItem()+climateBox1.getSelectedItem().toString()+governmentBox3.getSelectedItem().toString()+governorField7.getText());
                     cmdWriter.write(command+"\n");
+                    cmdWriter.flush();
                     cmdWriter.write(nameField1.getText() + "\n");
                     cmdWriter.write(xField2.getText() + "\n");
                     cmdWriter.write(yField3.getText() + "\n");

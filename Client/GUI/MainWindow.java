@@ -96,6 +96,7 @@ public class MainWindow extends JFrame {
         res = ResourceBundle.getBundle("Client.Resources.ProgramResources", locale);
         tablePanel.setRes(res);
         tablePanel.updateTime();
+        tablePanel.updateSort();
         infopanel.updateText(res);
         localCombo.setSelectedItem(locale);
         buttonPanel.updateText(res);

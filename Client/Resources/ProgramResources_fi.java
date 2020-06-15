@@ -37,6 +37,8 @@ public class ProgramResources_fi extends ListResourceBundle implements Serializa
             {"update","Virkistää"},
             {"execute_script","Suorita komentosarja"},
             {"input","Parametrien syöttö"},
+            {"sort","lajittelu"}
+
     };
 
     @Override

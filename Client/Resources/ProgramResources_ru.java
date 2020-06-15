@@ -36,7 +36,10 @@ public class ProgramResources_ru extends ListResourceBundle implements Serializa
             {"remove_by_id","Удалить по ID"},
             {"remove_last","Удалить последний"},
             {"update","Обновить"},
-            {"execute_script","Выполнить скрипт"}
+            {"execute_script","Выполнить скрипт"},
+            {"sort","Сортировка"}
+
+
     };
     @Override
     protected Object[][] getContents() {

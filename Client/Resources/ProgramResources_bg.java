@@ -37,6 +37,7 @@ public class ProgramResources_bg extends ListResourceBundle implements Serializa
             {"update", "Обновяване"},
             {"execute_script", "Изпълнете скрипт"},
             {"input","Въвеждане на параметри"},
+            {"sort","сортиране"}
     };
     @Override
     protected Object[][] getContents() {

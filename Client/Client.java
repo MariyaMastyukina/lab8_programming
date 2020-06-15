@@ -1,5 +1,6 @@
 package Client;
 
+import Client.GUI.AddWindow;
 import Client.GUI.ConnectWindow;
 import Client.GUI.MainWindow;
 import Server.Collection.CollectWorker;
@@ -30,7 +31,7 @@ public class Client {
     public static void main(String[] args) throws IOException, ClassNotFoundException {
         new Launch(null,null,new ControlUnit());
         PipedWriter cmdWriter = new PipedWriter();
-        PipedReader cmdReader = new PipedReader(cmdWriter);
+        PipedReader cmdReader = new PipedReader(cmdWriter,1024*1024);
         BufferedReader brcmd=new BufferedReader(cmdReader);
         PipedReader resultReader = new PipedReader();
         PipedWriter resultWriter = new PipedWriter(resultReader);
@@ -58,15 +59,18 @@ public class Client {
                         transferObject=new TransferObject(ioServer,serverConnection,user.getMain());
                         continue;
                     }
-                    if (line.equals("add") || line.contains("update")){
+                    if (line.equals("add") || line.contains("update")) {
                         argsAdd = new ArrayList<>();
-                        while(!brcmd.ready()){}
-                        while (brcmd.ready()){
+                        while (!brcmd.ready()) {
+                        }
+                        while (argsAdd.size() != 10) {
                             argsAdd.add(brcmd.readLine());
                         }
                     }
             System.out.println(argsAdd);
                     command = new CommandObject(line, null);
+            System.out.println(command.getNameCommand());
+
             if (argsAdd != null) {
                 command.setArgs(argsAdd);
             }

@@ -66,7 +66,7 @@ public class SortCommand implements Command {
             return new Request("", coll.sort_governor(),null);
         }
         else {
-            return new Request("", coll.sort_user(),null);
+            return new Request("sort", coll.sort_user(),null);
         }
     }
     @Override

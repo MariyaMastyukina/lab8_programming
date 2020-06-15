@@ -24,7 +24,7 @@ public class ButtonPanel extends JPanel{
         this.frame=frame;
         read=new AddWindow(writer,frame,res);
         this.writer=writer;
-        parameterWindow=new ParameterWindow(frame, writer,res);
+        parameterWindow=new ParameterWindow(frame, writer,res,read);
         simpleListener=new SimpleListener();
         notSimpleListener=new NotSimpleListener();
         setLayout(new GridLayout(ControlUnit.getCommands().size()-1,1,3,5));

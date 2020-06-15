@@ -19,10 +19,11 @@ public class ParameterWindow extends JDialog {
     private ResourceBundle res;
     private AddWindow read;
 
-    public ParameterWindow(JFrame frame, PipedWriter writer, ResourceBundle res) {
+    public ParameterWindow(JFrame frame, PipedWriter writer, ResourceBundle res, AddWindow read) {
         super(frame, res.getString("input"), true);
         this.res = res;
-        read=new AddWindow(writer,frame,res);
+//        read=new AddWindow(writer,frame,res);
+        this.read=read;
         button = new JButton(res.getString("confirm"));
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         this.writer = writer;

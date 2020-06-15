@@ -2,6 +2,7 @@ package Client.GUI;
 
 import Client.User;
 import Server.Request;
+import Server.Server;
 import com.sun.tools.internal.xjc.reader.xmlschema.bindinfo.BIConversion;
 import javafx.scene.control.TableColumn;
 
@@ -42,6 +43,7 @@ public class TablePanel extends JPanel {
     private JTextField ownerFilter=new JTextField();
     private JTextField nameFilter=new JTextField();
     CityTableModel tableModel;
+    SortPanel sorterr;
 
     public TablePanel(CityTableModel tableModel, PipedWriter cmdWriter, ResourceBundle res,Request list) {
         this.cmdWriter=cmdWriter;
@@ -58,6 +60,8 @@ public class TablePanel extends JPanel {
 //        table.setDefaultRenderer(LocalDateTime.class,new DateRender(res.getLocale()));
 //        JScrollPane scrollPane=new JScrollPane(table);
 //        add(scrollPane,BorderLayout.CENTER);
+        JPanel all=new JPanel(new GridLayout(2,1));
+        sorterr=new SortPanel(res,cmdWriter);
         JPanel filterPanel=new JPanel(new GridLayout(1,13));
         map.put("id",idFilter);
         map.put("name",nameFilter);
@@ -94,7 +98,9 @@ public class TablePanel extends JPanel {
             });
             i++;
         }
-        add(filterPanel,BorderLayout.NORTH);
+        all.add(sorterr);
+        all.add(filterPanel);
+        add(all,BorderLayout.NORTH);
     }
 
     public void setRes(ResourceBundle res) {
@@ -133,8 +139,11 @@ public class TablePanel extends JPanel {
         DateTimeFormatter formatter;
         public DateRender(Locale locale){
             super();
-            formatter=DateTimeFormatter.ofLocalizedDateTime(FormatStyle.SHORT).withLocale(locale);
+            formatter=DateTimeFormatter.ofLocalizedDateTime(FormatStyle.LONG).withLocale(locale);
         }
+    }
+    public void updateSort(){
+        sorterr.updateSort(res);
     }
     public void updateTime(){
         table.setDefaultRenderer(LocalDateTime.class,new DateRender(res.getLocale()));
@@ -151,22 +160,6 @@ public class TablePanel extends JPanel {
         table.setRowSorter(sorter);
         table.setColumnSelectionAllowed(true);
         table.setDefaultRenderer(LocalDateTime.class, new DateRender(res.getLocale()));
-        table.getTableHeader().addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                Point p=e.getPoint();
-                int collumn=table.rowAtPoint(p);
-                if (e.getClickCount()==1){
-                    if (collumn!=-1) {
-                        try {
-                            cmdWriter.write("sort "+table.getColumnName(collumn));
-                        } catch (IOException ex) {
-                            ex.printStackTrace();
-                        }
-                    }
-                }
-            }
-        });
         JScrollPane scrollPane = new JScrollPane(table);
         add(scrollPane, BorderLayout.CENTER);
         return table;

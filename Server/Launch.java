@@ -27,7 +27,7 @@ public class Launch implements Callable<Request> {
         this.command=command;
         Command group_counting_by_population = new GroupCountingByPopulationCommand(collection, pusk);
 //        Command help = new HelpCommand(pusk);
-//        Command sort = new SortCommand(pusk, collection);
+        Command sort = new SortCommand(pusk, collection);
         Command remove_by_id = new RemoveByIdCommand(pusk, collection);
         Command remove_all_by_meters_above_sea_level = new RemoveAllBYMetersAboveSeaLevelCommand(collection, pusk);
         Command clear = new ClearCommand(pusk, collection);
