@@ -11,7 +11,7 @@ import java.util.ResourceBundle;
 import java.util.Vector;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-public class CityTableModel extends DefaultTableModel {
+public class CityTableModel extends AbstractTableModel {
     private Vector<String>columns;
     private Vector<Vector<Object>> data=new Vector<>();
     CityTableModel(ResourceBundle res, Request table){
@@ -20,19 +20,19 @@ public class CityTableModel extends DefaultTableModel {
     }
     public void changeColumns(ResourceBundle res){
         columns=new Vector<>(Arrays.asList(
-                "id",
-                "name",
-                "x",
-                "y",
-                "date",
-                "area",
-                "population",
-                "meters",
-                "capital",
-                "climate",
-                "government",
-                "governor",
-                "user"
+                res.getString("id"),
+                res.getString("name"),
+                res.getString("x"),
+                res.getString("y"),
+                res.getString("time"),
+                res.getString("area"),
+                res.getString("population"),
+                res.getString("meters"),
+                res.getString("capital"),
+                res.getString("climate"),
+                res.getString("government"),
+                res.getString("governor"),
+                res.getString("owner")
                 ));
     }
 

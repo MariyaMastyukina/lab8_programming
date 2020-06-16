@@ -1,6 +1,7 @@
 package Client.GUI;
 
 import Client.User;
+import Server.Collection.City;
 import Server.Request;
 import Server.Server;
 import com.sun.tools.internal.xjc.reader.xmlschema.bindinfo.BIConversion;
@@ -11,16 +12,21 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableRowSorter;
+import javax.swing.text.DateFormatter;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.io.IOException;
 import java.io.PipedWriter;
+import java.text.DateFormat;
+import java.text.NumberFormat;
+import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
 import java.util.*;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.regex.PatternSyntaxException;
 
 public class TablePanel extends JPanel {
@@ -136,10 +142,11 @@ public class TablePanel extends JPanel {
         }
     }
     static class DateRender extends DefaultTableCellRenderer{
+        SimpleDateFormat dateFormat=new SimpleDateFormat();
         DateTimeFormatter formatter;
         public DateRender(Locale locale){
             super();
-            formatter=DateTimeFormatter.ofLocalizedDateTime(FormatStyle.LONG).withLocale(locale);
+            formatter=DateTimeFormatter.ofLocalizedDateTime(FormatStyle.SHORT).withLocale(locale);
         }
     }
     public void updateSort(){
@@ -149,10 +156,11 @@ public class TablePanel extends JPanel {
         table.setDefaultRenderer(LocalDateTime.class,new DateRender(res.getLocale()));
     }
     public JTable setTable(Request list,CityTableModel tableModel) {
-        for (int i=0;i<tableModel.getColumnCount();i++){
-            tableModel.addColumn(tableModel.getColumns().get(i));
-        }
+
         table = new JTable(tableModel);
+        for (int i=0;i<tableModel.getColumnCount();i++){
+            table.getTableHeader().getColumnModel().getColumn(i).setHeaderValue(tableModel.getColumns().get(i));
+        }
         table.setPreferredScrollableViewportSize(new Dimension(500, 70));
         table.setFillsViewportHeight(true);
         sorter = new TableRowSorter<>(tableModel);
@@ -162,7 +170,14 @@ public class TablePanel extends JPanel {
         table.setDefaultRenderer(LocalDateTime.class, new DateRender(res.getLocale()));
         JScrollPane scrollPane = new JScrollPane(table);
         add(scrollPane, BorderLayout.CENTER);
+        System.out.println(res.getLocale());
+        System.out.println(NumberFormat.getAvailableLocales());
         return table;
+    }
+    public void updateColumns(){
+        for (int i=0;i<tableModel.getColumnCount();i++){
+            table.getTableHeader().getColumnModel().getColumn(i).setHeaderValue(tableModel.getColumns().get(i));
+        }
     }
 
 }

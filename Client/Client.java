@@ -10,6 +10,7 @@ import Server.Request;
 import com.sun.jdi.connect.Connector;
 
 import javax.swing.*;
+import java.awt.*;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PipedReader;
@@ -28,6 +29,7 @@ import java.util.logging.Logger;
  */
 public class Client {
     static Logger LOGGER;
+    static Socket socket;
     public static void main(String[] args) throws IOException, ClassNotFoundException {
         new Launch(null,null,new ControlUnit());
         PipedWriter cmdWriter = new PipedWriter();
@@ -37,10 +39,25 @@ public class Client {
         PipedWriter resultWriter = new PipedWriter(resultReader);
         BufferedReader br=new BufferedReader(resultReader);
         ConnectWindow app = new ConnectWindow(resultWriter);
-        app.setVisible(true);
+        try {
+            app.setVisible(true);
+        }
+        catch(HeadlessException e){
+            System.out.println("Не нашел дисплей(");
+            System.exit(0);
+        }
         while(!br.ready()){}
         ServerConnection serverConnection=new ServerConnection();
-        Socket socket=serverConnection.connection(br.readLine(),br.readLine(),app);
+        boolean checker=false;
+        while(!checker) {
+            try {
+                socket = serverConnection.connection(br.readLine(), br.readLine(), app);
+                checker=true;
+            } catch (NullPointerException e) {
+                JOptionPane.showMessageDialog(app,"Надо бы ввести данные для подключение, а вы это не сделали","ОШИБКА", JOptionPane.ERROR_MESSAGE);
+
+            }
+        }
         while(socket==null){
             socket=serverConnection.connection(br.readLine(),br.readLine(),app);
         }

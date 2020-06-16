@@ -27,6 +27,8 @@ import java.util.logging.Logger;
  */
 public class Server {
     private static ControlUnit cu=new ControlUnit();
+    private static int PORT;
+     static boolean checker2=false;
     public CommandObject currentCommand;
     private static ForkJoinPool readRequest=ForkJoinPool.commonPool();
     private static ExecutorService handleRequest= Executors.newCachedThreadPool();
@@ -41,13 +43,22 @@ public class Server {
         ClientConnection clientConnection = null;
         IOInterfaceStream ioServer=new IOTerminal(System.out,System.in);
         LOGGER=Logger.getLogger(Server.class.getName());
-        Integer PORT=Integer.parseInt(args[0]);
         try{
+        PORT=Integer.parseInt(args[0]);
+
             LOGGER.log(Level.INFO,"Подключение к клиенту");
             clientConnection=new ClientConnection();
-            clientConnection.connect(PORT);
+            while ((!checker2)){
+                try{
+                    clientConnection.connect(PORT);
+                    checker2=true;
+                }catch (BindException e){
+                    PORT++;
+                }
+            }
+
         }
-        catch(IndexOutOfBoundsException e){
+        catch(ArrayIndexOutOfBoundsException e){
             LOGGER.log(Level.WARNING,"Ошибка в подключении к клиенту, не указан порт");
             System.out.println("Нужно указать порт");
             System.exit(0);
@@ -57,10 +68,7 @@ public class Server {
             System.out.println("Формат порта не верен");
             System.exit(0);
         }
-        catch (BindException e){
-            PORT++;
-            clientConnection.connect(PORT);
-        }
+
         HashMap<SelectionKey,Future<CommandObject>>to=new HashMap<>();
         HashMap<SelectionKey,Future<Request>>res=new HashMap<>();
         DBConnection dbConnection=new DBConnection();

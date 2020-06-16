@@ -95,6 +95,8 @@ public class MainWindow extends JFrame {
     public void setCurrentlocale(Locale locale){
         res = ResourceBundle.getBundle("Client.Resources.ProgramResources", locale);
         tablePanel.setRes(res);
+        tableModel.changeColumns(res);
+        tablePanel.updateColumns();
         tablePanel.updateTime();
         tablePanel.updateSort();
         infopanel.updateText(res);
