@@ -1,6 +1,6 @@
 package Client.GUI;
 
-import Server.Collection.ControlUnit;
+import Server.Launch.ControlUnit;
 import Server.Commands.Command;
 
 import javax.swing.*;
@@ -10,7 +10,6 @@ import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.io.PipedWriter;
 import java.util.*;
-import java.util.List;
 
 public class ButtonPanel extends JPanel{
     private PipedWriter writer;

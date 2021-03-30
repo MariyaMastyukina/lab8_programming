@@ -1,15 +1,8 @@
 package Client.GUI;
 
-import Client.IOInterfaceStream;
-import Client.IOTerminal;
-import Client.ServerConnection;
-import Client.User;
-
 import javax.swing.*;
 import java.awt.*;
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.PipedReader;
 import java.io.PipedWriter;
 
 public class ConnectWindow extends JFrame{

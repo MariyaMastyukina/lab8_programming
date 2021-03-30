@@ -1,6 +1,6 @@
 package Client.GUI;
 
-import Client.User;
+import Client.DataUtils.User;
 import javafx.scene.control.ComboBox;
 
 import javax.swing.*;

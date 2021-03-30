@@ -1,11 +1,9 @@
 package Client.GUI;
 
 import Server.Collection.City;
-import Server.Request;
+import Server.ConnectionUtils.Request;
 
 import javax.swing.table.AbstractTableModel;
-import javax.swing.table.DefaultTableModel;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.ResourceBundle;
 import java.util.Vector;

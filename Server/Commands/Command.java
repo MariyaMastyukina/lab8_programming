@@ -1,7 +1,7 @@
 package Server.Commands;
 
-import Client.CommandObject;
-import Server.Request;
+import Client.DataUtils.CommandObject;
+import Server.ConnectionUtils.Request;
 
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;

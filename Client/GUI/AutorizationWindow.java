@@ -1,10 +1,5 @@
 package Client.GUI;
 
-import Client.IOInterfaceStream;
-import Client.IOTerminal;
-import Client.ServerConnection;
-import Client.User;
-
 import javax.swing.*;
 import java.awt.*;
 import java.io.IOException;

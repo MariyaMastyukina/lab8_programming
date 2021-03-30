@@ -1,8 +1,8 @@
 package Client.GUI;
 
-import Client.User;
+import Client.DataUtils.User;
 import Server.Collection.City;
-import Server.Request;
+import Server.ConnectionUtils.Request;
 import javafx.util.Pair;
 
 import javax.swing.*;

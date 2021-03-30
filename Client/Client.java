@@ -1,13 +1,14 @@
 package Client;
 
-import Client.GUI.AddWindow;
+import Client.ConnectionUtils.ServerConnection;
+import Client.DataUtils.CommandObject;
+import Client.DataUtils.TransferObject;
+import Client.DataUtils.User;
 import Client.GUI.ConnectWindow;
-import Client.GUI.MainWindow;
-import Server.Collection.CollectWorker;
-import Server.Collection.ControlUnit;
-import Server.Launch;
-import Server.Request;
-import com.sun.jdi.connect.Connector;
+import Client.IOClient.IOInterfaceStream;
+import Client.IOClient.IOTerminal;
+import Server.Launch.ControlUnit;
+import Server.Launch.Launch;
 
 import javax.swing.*;
 import java.awt.*;
@@ -17,10 +18,6 @@ import java.io.PipedReader;
 import java.io.PipedWriter;
 import java.net.Socket;
 import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.Locale;
-import java.util.ResourceBundle;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**

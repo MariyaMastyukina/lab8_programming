@@ -1,9 +1,7 @@
 package Client.GUI;
 
-import Client.User;
-import Server.Collection.City;
-import Server.Request;
-import Server.Server;
+import Client.DataUtils.User;
+import Server.ConnectionUtils.Request;
 import com.sun.tools.internal.xjc.reader.xmlschema.bindinfo.BIConversion;
 import javafx.scene.control.TableColumn;
 
@@ -12,21 +10,16 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableRowSorter;
-import javax.swing.text.DateFormatter;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.io.IOException;
 import java.io.PipedWriter;
-import java.text.DateFormat;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
 import java.util.*;
-import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.regex.PatternSyntaxException;
 
 public class TablePanel extends JPanel {

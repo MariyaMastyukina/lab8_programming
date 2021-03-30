@@ -1,7 +1,6 @@
 package Client.GUI;
 
-import Server.Collection.City;
-import Server.Request;
+import Server.ConnectionUtils.Request;
 import sun.applet.Main;
 
 import javax.swing.*;
@@ -11,7 +10,6 @@ import java.awt.event.ComponentListener;
 import java.io.PipedWriter;
 import java.util.Locale;
 import java.util.ResourceBundle;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 public class MainWindow extends JFrame {
     JComboBox<Locale> localCombo;
