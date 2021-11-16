@@ -1,9 +1,0 @@
-<component name="ArtifactManager">
-  <artifact type="jar" name="lab8:jar">
-    <output-path>$PROJECT_DIR$/out/artifacts/lab8_jar</output-path>
-    <root id="archive" name="lab8.jar">
-      <element id="module-output" name="lab8" />
-      <element id="extracted-dir" path="$PROJECT_DIR$/../../../postgresql-42.2.12.jar" path-in-jar="/" />
-    </root>
-  </artifact>
-</component>
