@@ -33,6 +33,7 @@ An application with GUI which allows you work with data of different Cities
 5. Pattern Command
 6. Translation by using Resource Bundle
 7. Maven
+
 **Launch**
    
 1) mvn package -PServer
