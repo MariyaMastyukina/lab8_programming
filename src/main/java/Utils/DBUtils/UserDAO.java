@@ -1,0 +1,71 @@
+package Utils.DBUtils;
+
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.Base64;
+
+public class UserDAO {
+    private static Connection connection;
+    private static String userTable;
+
+    public UserDAO(Connection connection, String userTable) {
+        UserDAO.connection = connection;
+        UserDAO.userTable = userTable;
+    }
+
+    public void closeConnection() throws SQLException {
+        connection.close();
+    }
+
+    public static String checkIn(String login, char[] password) throws SQLException, NoSuchAlgorithmException {
+        PreparedStatement ps = connection.prepareStatement("SELECT login FROM " + userTable);
+        ResultSet rs = ps.executeQuery();
+        while (rs.next()) {
+            if (login.equals(rs.getString("login"))) return "Пользователен с таким логином уже зарегистрирован";
+        }
+        String salt = getSalt();
+        String hashPassword = hash(new String(password), salt);
+        ps = connection.prepareStatement("INSERT INTO " + userTable + " (login, password, salt) VALUES (?, ?, ?) ");
+        ps.setString(1, login);
+        ps.setString(2, hashPassword);
+        ps.setString(3, salt);
+        ps.execute();
+        ps.close();
+        return null;
+    }
+
+    private static String getSalt() {
+        SecureRandom random = new SecureRandom();
+        byte[] salt = new byte[16];
+        random.nextBytes(salt);
+        return new String(salt, StandardCharsets.UTF_8);
+    }
+
+    private static String hash(String password, String salt) throws NoSuchAlgorithmException {
+        try {
+            MessageDigest md = MessageDigest.getInstance("SHA-384");
+            byte[] hashbytes = md.digest((password + salt).getBytes(StandardCharsets.UTF_8));
+            return Base64.getEncoder().encodeToString(hashbytes);
+        } catch (NoSuchAlgorithmException e) {
+            return password;
+        }
+    }
+
+    public static String signIn(String login, char[] password) throws SQLException, NoSuchAlgorithmException {
+        PreparedStatement pr = connection.prepareStatement("SELECT * FROM " + userTable + " WHERE login = ?");
+        pr.setString(1, login);
+        ResultSet rs = pr.executeQuery();
+        if (rs.next() && hash(new String(password), rs.getString("salt")).equals(rs.getString("password"))) {
+            return null;
+        } else {
+            return "Неверное имя пользователя или пароль";
+        }
+    }
+
+}

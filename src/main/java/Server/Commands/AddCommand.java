@@ -1,61 +1,62 @@
 package Server.Commands;
 
-import Client.DataUtils.CommandObject;
-import Server.Collection.City;
-import Server.ConnectionUtils.Request;
-import Server.DBUtils.CollectionDB;
-import Server.Launch.CollectWorker;
+import Server.Launch.CityService;
 import Server.Launch.ControlUnit;
+import Server.Model.*;
+import Utils.ConnectionUtils.Request;
+import Utils.DataUtils.CommandUtils;
 
 import java.io.IOException;
 import java.sql.SQLException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.time.LocalDateTime;
+import java.util.List;
 
-/**
- * Класс команды add-добавление объекта в коллекцию
- */
 public class AddCommand implements Command {
-    CollectWorker coll;
-    static Logger LOGGER;
-    private TypeCommand type;
-    static int argsSize;
+    private CityService cityService;
+    private String name = "add";
+    private int argsSize = 0;
+    private boolean isButton = true;
 
-    /**
-     * Конструктор - создание нового объекта с определенными значениями
-     *
-     * @param p-переменная для управления командами
-     * @param collection-  переменная для работы с коллекцией
-     */
-    public AddCommand(ControlUnit p, CollectWorker collection) {
-        p.addCommand("add", this);
-        this.coll = collection;
-        LOGGER = Logger.getLogger(AddCommand.class.getName());
-        type = TypeCommand.EDIT;
-        argsSize = 0;
-
+    public AddCommand(ControlUnit controlUnit, CityService cityService) {
+        controlUnit.addCommand(name, this);
+        this.cityService = cityService;
     }
 
-    /**
-     * Функция выполнения команды
-     */
     @Override
-    public Request execute(CommandObject user) throws IOException, SQLException {
-        LOGGER.log(Level.INFO, "Отправка результата выполнения команды на сервер");
-        City city = new City(user.getArgs());
-        city.setUser(user.getLogin());
-        CollectionDB.insertColl(city, false, user.getLogin());
-        coll.add(city);
-        return new Request("Команда add выполнена. Элемент добавлен в коллекцию, введите команду \"show\", чтобы увидеть содержимое коллекции", coll.getCollection(), null);
+    public Request execute(CommandUtils commandUtils) throws IOException, SQLException {
+        City city = createCity(commandUtils.getArgs(), commandUtils.getLogin());
+        city.setUser(commandUtils.getLogin());
+        return cityService.add(city, commandUtils.getLogin());
+    }
+
+    private City createCity(List<String> args, String login) {
+        City city = new City();
+        city.setName(args.get(0));
+        city.setCoordinates(new Coordinates(args.subList(1, 3)));
+        city.setCreationDate(LocalDateTime.now());
+        city.setArea(Double.parseDouble(args.get(3)));
+        city.setPopulation(Integer.parseInt(args.get(4)));
+        city.setMetersAboveSeaLevel(Integer.parseInt(args.get(5)));
+        city.setCapital(Boolean.parseBoolean(args.get(6)));
+        city.setClimate(Climate.valueOf(args.get(7)));
+        city.setGovernment(Government.valueOf(args.get(8)));
+        city.setGovernor(new Human(args.get(9)));
+        city.setUser(login);
+        return city;
     }
 
     @Override
     public String getName() {
-        return "add";
+        return name;
     }
 
     @Override
-    public int getargsSize() {
+    public int getArgsSize() {
         return argsSize;
+    }
+
+    @Override
+    public boolean isButton() {
+        return isButton;
     }
 }

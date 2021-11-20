@@ -6,36 +6,40 @@ import java.io.IOException;
 import java.io.PipedWriter;
 
 public class RegisterWindow extends JFrame {
-    JTextField login;
-    JPasswordField password;
-    PipedWriter writer;
-
-    public RegisterWindow(PipedWriter writer) {
+    private JTextField loginField;
+    private JPasswordField passwordField;
+    private PipedWriter commandWriter;
+    private JPanel registerPanel;
+    private JButton checkIn;
+    public RegisterWindow(PipedWriter commandWriter) {
         super("Регистрация");
+        this.commandWriter = commandWriter;
+        initComponents();
         Toolkit toolkit = Toolkit.getDefaultToolkit();
         setBounds(toolkit.getScreenSize().width / 2, toolkit.getScreenSize().height / 5, toolkit.getScreenSize().width / 2, toolkit.getScreenSize().height / 5);
-        this.writer = writer;
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        JPanel panel = new JPanel(new GridLayout(2, 2, 0, 10));
-        panel.add(new JLabel("Введите имя пользователя:\n" + "Пример: evreechka\n"));
-        login = new JTextField();
-        panel.add(login);
-        panel.add(new JLabel("Введите пароль:\n" + "Пример: evreechka\n"));
-        password = new JPasswordField();
-        password.setEchoChar('*');
-        panel.add(password);
-        add(panel, BorderLayout.CENTER);
-        JButton button = new JButton("check_in");
-        button.addActionListener(e -> {
+        add(registerPanel, BorderLayout.CENTER);
+        add(checkIn, BorderLayout.SOUTH);
+    }
+    private void initComponents() {
+        registerPanel = new JPanel(new GridLayout(2, 2, 0, 10));
+        loginField = new JTextField();
+        passwordField = new JPasswordField();
+        passwordField.setEchoChar('*');
+        registerPanel.add(new JLabel("Введите имя пользователя:\n" + "Пример: evreechka\n"));
+        registerPanel.add(loginField);
+        registerPanel.add(new JLabel("Введите пароль:\n" + "Пример: evreechka\n"));
+        registerPanel.add(passwordField);
+        checkIn = new JButton("check_in");
+        checkIn.addActionListener(e -> {
             try {
-                writer.write(login.getText() + "\n");
-                writer.write(password.getText() + "\n");
-                writer.flush();
+                commandWriter.write(loginField.getText() + "\n");
+                commandWriter.write(passwordField.getText() + "\n");
+                commandWriter.flush();
             } catch (IOException ex) {
                 ex.printStackTrace();
             }
         });
-        add(button, BorderLayout.SOUTH);
-    }
 
+    }
 }

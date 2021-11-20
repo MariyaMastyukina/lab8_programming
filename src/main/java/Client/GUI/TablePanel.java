@@ -1,7 +1,7 @@
 package Client.GUI;
 
-import Client.DataUtils.User;
-import Server.ConnectionUtils.Request;
+import Utils.ConnectionUtils.Request;
+import Utils.UserUtils;
 
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
@@ -20,38 +20,57 @@ import java.util.*;
 import java.util.regex.PatternSyntaxException;
 
 public class TablePanel extends JPanel {
-    private final JTextField idFilter = new JTextField();
-    private final JTextField xFilter = new JTextField();
-    private final JTextField governmentFilter = new JTextField();
-    private final JTextField areaFilter = new JTextField();
-    private final JTextField governorFilter = new JTextField();
-    private final JTextField timeFilter = new JTextField();
-    private final JTextField yFilter = new JTextField();
-    private final JTextField metersFilter = new JTextField();
-    private final JTextField populationFilter = new JTextField();
-    private final JTextField climateFilter = new JTextField();
-    private final JTextField capitalFilter = new JTextField();
+    private JTextField idFilter;
+    private JTextField xFilter;
+    private JTextField governmentFilter;
+    private JTextField areaFilter;
+    private JTextField governorFilter;
+    private JTextField timeFilter;
+    private JTextField yFilter;
+    private JTextField metersFilter;
+    private JTextField populationFilter;
+    private JTextField climateFilter;
+    private JTextField capitalFilter;
+    private JTextField ownerFilter;
+    private JTextField nameFilter;
     private LinkedHashMap<String, JTextField> map = new LinkedHashMap<>();
     private JTable table;
-    PipedWriter cmdWriter;
-    private ResourceBundle res;
+    private PipedWriter commandWriter;
+    private ResourceBundle resourceBundle;
     private TableRowSorter<CityTableModel> sorter;
-    private JTextField ownerFilter = new JTextField();
-    private JTextField nameFilter = new JTextField();
     private List<String> columnsName;
-    CityTableModel tableModel;
-    SortPanel sorterr;
+    private CityTableModel tableModel;
+    private SortPanel sortPanel;
+    private UserUtils userUtils;
+    private JPanel mainPanel;
+    private JPanel filterPanel;
 
-    public TablePanel(CityTableModel tableModel, PipedWriter cmdWriter, ResourceBundle res, Request list) {
-        columnsName = List.of("id", "name", "x", "y", "date", "area", "population", "meters", "capital", "climate", "government", "governor", "user");
-        this.cmdWriter = cmdWriter;
-        this.res = res;
+    public TablePanel(CityTableModel tableModel, PipedWriter commandWriter, ResourceBundle resourceBundle, Request list, UserUtils userUtils) {
+        this.userUtils = userUtils;
+        this.commandWriter = commandWriter;
+        this.resourceBundle = resourceBundle;
+        this.tableModel = tableModel;
+        initComponents();
         setLayout(new BorderLayout());
         setTable(tableModel);
-        this.tableModel = tableModel;
-        JPanel all = new JPanel(new GridLayout(2, 1));
-        sorterr = new SortPanel(res, cmdWriter);
-        JPanel filterPanel = new JPanel(new GridLayout(1, 13));
+        add(mainPanel, BorderLayout.NORTH);
+    }
+
+    private void initComponents() {
+        columnsName = List.of("id", "name", "x", "y", "date", "area", "population", "meters", "capital", "climate", "government", "governor", "user");
+        idFilter = new JTextField();
+        xFilter = new JTextField();
+        governmentFilter = new JTextField();
+        areaFilter = new JTextField();
+        governorFilter = new JTextField();
+        timeFilter = new JTextField();
+        yFilter = new JTextField();
+        metersFilter = new JTextField();
+        populationFilter = new JTextField();
+        climateFilter = new JTextField();
+        capitalFilter = new JTextField();
+        ownerFilter = new JTextField();
+        nameFilter = new JTextField();
         map.put("id", idFilter);
         map.put("name", nameFilter);
         map.put("x", xFilter);
@@ -65,6 +84,11 @@ public class TablePanel extends JPanel {
         map.put("government", governmentFilter);
         map.put("governor", governorFilter);
         map.put("owner", ownerFilter);
+
+        idFilter = new JTextField();
+        mainPanel = new JPanel(new GridLayout(2, 1));
+        sortPanel = new SortPanel(resourceBundle, commandWriter);
+        filterPanel = new JPanel(new GridLayout(1, 13));
         int i = 0;
         for (Map.Entry<String, JTextField> element : map.entrySet()) {
             int finalI = i;
@@ -87,13 +111,8 @@ public class TablePanel extends JPanel {
             });
             i++;
         }
-        all.add(sorterr);
-        all.add(filterPanel);
-        add(all, BorderLayout.NORTH);
-    }
-
-    public void setRes(ResourceBundle res) {
-        this.res = res;
+        mainPanel.add(sortPanel);
+        mainPanel.add(filterPanel);
     }
 
     private void textFilter(String field, int index) {
@@ -106,7 +125,7 @@ public class TablePanel extends JPanel {
         sorter.setRowFilter(rowFilter);
     }
 
-    class ClickHandler extends MouseAdapter {
+    private class ClickHandler extends MouseAdapter {
         @Override
         public void mouseClicked(MouseEvent e) {
             Point p = e.getPoint();
@@ -120,18 +139,18 @@ public class TablePanel extends JPanel {
                     for (String tableName : result.keySet()) {
                         System.out.println(tableName + ":" + result.get(tableName));
                     }
-                    if (result.get("user").equals(User.getLogin())) {
-                        new EditWindow(result, cmdWriter, res);
+                    if (result.get("user").equals(userUtils.getLogin())) {
+                        new EditWindow(result, commandWriter, resourceBundle);
                     } else {
 
-                        new InfoWindow(result, res);
+                        new InfoWindow(result, resourceBundle);
                     }
                 }
             }
         }
     }
 
-    static class DateRender extends DefaultTableCellRenderer {
+    private class DateRender extends DefaultTableCellRenderer {
         DateTimeFormatter formatter;
 
         public DateRender(Locale locale) {
@@ -140,15 +159,7 @@ public class TablePanel extends JPanel {
         }
     }
 
-    public void updateSort() {
-        sorterr.updateSort(res);
-    }
-
-    public void updateTime() {
-        table.setDefaultRenderer(LocalDateTime.class, new DateRender(res.getLocale()));
-    }
-
-    public JTable setTable(CityTableModel tableModel) {
+    private void setTable(CityTableModel tableModel) {
 
         table = new JTable(tableModel);
         for (int i = 0; i < tableModel.getColumnCount(); i++) {
@@ -160,11 +171,23 @@ public class TablePanel extends JPanel {
         table.addMouseListener(new ClickHandler());
         table.setRowSorter(sorter);
         table.setColumnSelectionAllowed(true);
-        table.setDefaultRenderer(LocalDateTime.class, new DateRender(res.getLocale()));
+        table.setDefaultRenderer(LocalDateTime.class, new DateRender(resourceBundle.getLocale()));
         JScrollPane scrollPane = new JScrollPane(table);
         add(scrollPane, BorderLayout.CENTER);
-        return table;
     }
+
+    public void setResourceBundle(ResourceBundle resourceBundle) {
+        this.resourceBundle = resourceBundle;
+    }
+
+    public void updateSort() {
+        sortPanel.updateSort(resourceBundle);
+    }
+
+    public void updateTime() {
+        table.setDefaultRenderer(LocalDateTime.class, new DateRender(resourceBundle.getLocale()));
+    }
+
 
     public void updateColumns() {
         for (int i = 0; i < tableModel.getColumnCount(); i++) {

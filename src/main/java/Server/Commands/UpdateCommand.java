@@ -1,70 +1,62 @@
 package Server.Commands;
 
-import Client.DataUtils.CommandObject;
-import Server.Collection.City;
-import Server.ConnectionUtils.Request;
-import Server.DBUtils.CollectionDB;
-import Server.Launch.CollectWorker;
+import Server.Launch.CityService;
 import Server.Launch.ControlUnit;
+import Server.Model.*;
+import Utils.ConnectionUtils.Request;
+import Utils.DataUtils.CommandUtils;
 
 import java.io.IOException;
 import java.sql.SQLException;
-import java.util.logging.Logger;
+import java.time.LocalDateTime;
+import java.util.List;
 
-/**
- * Класс команды update-обновление элемента по id
- */
 public class UpdateCommand implements Command {
-    CollectWorker coll;
-    static Logger LOGGER;
-    TypeCommand type;
-    static int argsSize;
+    private final CityService cityService;
+    private final int argsSize = 1;
+    private final String name = "update";
+    private final boolean isButton = true;
 
-    /**
-     * Конструктор - создание нового объекта с определенными значениями
-     *
-     * @param p-          переменная для управления командами
-     * @param collection- переменнаяи для работы с коллекцией
-     */
-    public UpdateCommand(ControlUnit p, CollectWorker collection) {
-        p.addCommand("update", this);
-        this.coll = collection;
-        type = TypeCommand.EDIT;
-        argsSize = 1;
+    public UpdateCommand(ControlUnit controlUnit, CityService cityService) {
+        controlUnit.addCommand(name, this);
+        this.cityService = cityService;
     }
 
-    /**
-     * Функция выполнения команды
-     */
     @Override
-    public Request execute(CommandObject CO) throws IOException, SQLException {
-        String checker;
-        City newcity;
-        long id = Long.parseLong(CO.getOption());
-        for (City city : coll.getCollection()) {
-            if (city.getIdOfCity() == id) {
-                newcity = new City(CO.getArgs());
-                newcity.setId(id);
-                newcity.setUser(CO.getLogin());
-                checker = CollectionDB.UpdateIDDB(id, newcity);
-                if (checker == null) {
-                    coll.update(newcity, CO.getLogin());
-                    return new Request("Команда update выполнена. Значение элемента коллекции с id " + Integer.parseInt(CO.getOption()), coll.getCollection(), null);
-                } else {
-                    return new Request(checker, null, null);
-                }
-            }
-        }
-        return new Request("Элемента с таким id нет.", null, null);
+    public Request execute(CommandUtils commandUtils) throws IOException, SQLException {
+        City city = updateCity(commandUtils.getArgs(), commandUtils.getLogin(), Long.parseLong(commandUtils.getOption()));
+        return cityService.update(city);
+    }
+
+    private City updateCity(List<String> args, String login, long id) {
+        City city = new City();
+        city.setId(id);
+        city.setName(args.get(0));
+        city.setCoordinates(new Coordinates(args.subList(1, 3)));
+        city.setCreationDate(LocalDateTime.now());
+        city.setArea(Double.parseDouble(args.get(3)));
+        city.setPopulation(Integer.parseInt(args.get(4)));
+        city.setMetersAboveSeaLevel(Integer.parseInt(args.get(5)));
+        city.setCapital(Boolean.parseBoolean(args.get(6)));
+        city.setClimate(Climate.valueOf(args.get(7)));
+        city.setGovernment(Government.valueOf(args.get(8)));
+        city.setGovernor(new Human(args.get(9)));
+        city.setUser(login);
+        return city;
     }
 
     @Override
     public String getName() {
-        return "update";
+        return name;
     }
 
     @Override
-    public int getargsSize() {
+    public int getArgsSize() {
         return argsSize;
+    }
+
+    @Override
+    public boolean isButton() {
+        return isButton;
     }
 }

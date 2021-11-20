@@ -1,67 +1,41 @@
 package Server.Commands;
 
-import Client.DataUtils.CommandObject;
-import Server.ConnectionUtils.Request;
-import Server.DBUtils.CollectionDB;
-import Server.Launch.CollectWorker;
+import Server.Launch.CityService;
 import Server.Launch.ControlUnit;
+import Utils.ConnectionUtils.Request;
+import Utils.DataUtils.CommandUtils;
 
 import java.io.IOException;
 import java.sql.SQLException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
-/**
- * Класс команды remove_last-Удаление последнего элемента
- */
 public class RemoveLastCommand implements Command {
-    private CollectWorker coll;
-    static Logger LOGGER;
-    TypeCommand type;
-    static int argsSize;
+    private final CityService cityService;
+    private final int argsSize = 0;
+    private final String name = "remove_last";
+    private final boolean isButton = true;
 
-    /**
-     * Конструктор - создание нового объекта с определенными значениями
-     *
-     * @param p-          переменная для управления командами
-     * @param collection- переменнаяи для работы с коллекцией
-     */
-    public RemoveLastCommand(ControlUnit p, CollectWorker collection) {
-        p.addCommand("remove_last", this);
-        this.coll = collection;
-        LOGGER = Logger.getLogger(RemoveByIdCommand.class.getName());
-        type = TypeCommand.EDIT;
-        argsSize = 0;
-
+    public RemoveLastCommand(ControlUnit controlUnit, CityService cityService) throws IOException {
+        controlUnit.addCommand(name, this);
+        this.cityService = cityService;
     }
 
-    /**
-     * Функция выполнения команды
-     */
     @Override
-    public Request execute(CommandObject user) throws IOException, SQLException {
-        LOGGER.log(Level.INFO, "Отправка результата выполнения команды на сервер");
-        if (coll.getSize() != 0) {
-            long id = coll.get_id_last(user.getLogin());
-            if (id != 0) {
-                CollectionDB.removeIDBD(id, user.getLogin());
-                coll.remove_last(user.getLogin());
-                return new Request("Команда remove_last выполнена. Последний элемент коллекции удален", coll.getCollection(), null);
-            } else {
-                return new Request("Команда remove_last не выполнена, так как вы не создали ни один объект", null, null);
-            }
-        } else {
-            return new Request("Команда remove_last не выполнена. Коллекция пуста, удаление невозможно", null, null);
-        }
+    public Request execute(CommandUtils commandUtils) throws IOException, SQLException {
+        return cityService.removeLast(commandUtils.getLogin());
     }
 
     @Override
     public String getName() {
-        return "remove_last";
+        return name;
     }
 
     @Override
-    public int getargsSize() {
+    public int getArgsSize() {
         return argsSize;
+    }
+
+    @Override
+    public boolean isButton() {
+        return isButton;
     }
 }

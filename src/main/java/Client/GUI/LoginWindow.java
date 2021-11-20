@@ -6,35 +6,41 @@ import java.io.IOException;
 import java.io.PipedWriter;
 
 public class LoginWindow extends JFrame {
-    JTextField login;
-    JPasswordField password;
-    PipedWriter writer;
+    private JTextField loginField;
+    private JPasswordField passwordField;
+    private PipedWriter commandWriter;
+    private JPanel loginPanel;
+    private JButton signIn;
 
-    public LoginWindow(PipedWriter writer) {
+    public LoginWindow(PipedWriter commandWriter) {
         super("Вход");
+        this.commandWriter = commandWriter;
+        initComponents();
         Toolkit toolkit = Toolkit.getDefaultToolkit();
         setBounds(toolkit.getScreenSize().width / 2, toolkit.getScreenSize().height / 5, toolkit.getScreenSize().width / 2, toolkit.getScreenSize().height / 5);
-        this.writer = writer;
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        JPanel panel = new JPanel(new GridLayout(2, 2, 0, 10));
-        panel.add(new JLabel("Введите имя пользователя:\n" + "Пример: evreechka\n"));
-        login = new JTextField();
-        panel.add(login);
-        panel.add(new JLabel("Введите пароль:\n" + "Пример: evreechka\n"));
-        password = new JPasswordField();
-        password.setEchoChar('*');
-        panel.add(password);
-        add(panel, BorderLayout.CENTER);
-        JButton button = new JButton("sign_in");
-        button.addActionListener(e -> {
+        add(loginPanel, BorderLayout.CENTER);
+        add(signIn, BorderLayout.SOUTH);
+    }
+
+    private void initComponents() {
+        loginPanel = new JPanel(new GridLayout(2, 2, 0, 10));
+        loginField = new JTextField();
+        loginPanel.add(new JLabel("Введите имя пользователя:\n" + "Пример: evreechka\n"));
+        loginPanel.add(loginField);
+        loginPanel.add(new JLabel("Введите пароль:\n" + "Пример: evreechka\n"));
+        passwordField = new JPasswordField();
+        passwordField.setEchoChar('*');
+        loginPanel.add(passwordField);
+        signIn = new JButton("sign_in");
+        signIn.addActionListener(e -> {
             try {
-                writer.write(login.getText() + "\n");
-                writer.write(password.getText() + "\n");
-                writer.flush();
+                commandWriter.write(loginField.getText() + "\n");
+                commandWriter.write(passwordField.getText() + "\n");
+                commandWriter.flush();
             } catch (IOException ex) {
                 ex.printStackTrace();
             }
         });
-        add(button, BorderLayout.SOUTH);
     }
 }

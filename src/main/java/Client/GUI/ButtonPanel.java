@@ -14,36 +14,45 @@ import java.util.Map;
 import java.util.ResourceBundle;
 
 public class ButtonPanel extends JPanel {
-    private PipedWriter writer;
+    private PipedWriter commandWriter;
     private JFrame frame;
     private ParameterWindow parameterWindow;
-    private SimpleListener simpleListener;
-    private NotSimpleListener notSimpleListener;
-    private HashMap<String, JButton> buttons = new HashMap<>();
-    AddWindow read;
+    private Map<String, JButton> buttons = new HashMap<>();
+    private AddWindow addWindow;
+    private ResourceBundle resourceBundle;
 
-    ButtonPanel(JFrame frame, PipedWriter writer, ResourceBundle res) {
+    ButtonPanel(JFrame frame, PipedWriter commandWriter, ResourceBundle resourceBundle) {
         this.frame = frame;
-        read = new AddWindow(writer, frame, res);
-        this.writer = writer;
-        parameterWindow = new ParameterWindow(frame, writer, res, read);
-        simpleListener = new SimpleListener();
-        notSimpleListener = new NotSimpleListener();
-        setLayout(new GridLayout(ControlUnit.getCommands().size() - 1, 1, 3, 5));
-        Map<String, Command> commands = ControlUnit.getCommands();
-        commands.remove("sign_in");
-        commands.remove("check_in");
-        for (Command command : commands.values()) {
-            if (command.getargsSize() == 1) {
-                addButton(command.getName(), notSimpleListener);
-            } else {
-                addButton(command.getName(), simpleListener);
-            }
-        }
-        addButton("execute_script", notSimpleListener);
+        this.commandWriter = commandWriter;
+        this.resourceBundle = resourceBundle;
+        initComponents();
+        setLayout(new GridLayout(buttons.size(), 1, 3, 5));
     }
 
-    public void addButton(String name, ActionListener listener) {
+    private void initComponents() {
+        addWindow = new AddWindow(commandWriter, frame, resourceBundle);
+        parameterWindow = new ParameterWindow(frame, commandWriter, resourceBundle, addWindow);
+        initButtons();
+    }
+
+    private void initButtons() {
+        Map<String, Command> commands = new HashMap<>();
+        for (String nameCommand : ControlUnit.getCommands().keySet()) {
+            if (ControlUnit.getCommands().get(nameCommand).isButton()) {
+                commands.put(nameCommand, ControlUnit.getCommands().get(nameCommand));
+            }
+        }
+        for (Command command : commands.values()) {
+            if (command.getArgsSize() == 1) {
+                addButton(command.getName(), new NotSimpleListener());
+            } else {
+                addButton(command.getName(), new SimpleListener());
+            }
+        }
+        addButton("execute_script", new NotSimpleListener());
+    }
+
+    private void addButton(String name, ActionListener listener) {
         JButton button = new JButton(name);
         button.addActionListener(listener);
         button.setHorizontalAlignment(SwingConstants.CENTER);
@@ -52,25 +61,27 @@ public class ButtonPanel extends JPanel {
         add(button);
     }
 
-    void updateText(ResourceBundle res) {
-        for (Map.Entry<String, JButton> button : buttons.entrySet()) {
-            button.getValue().setText(res.getString(button.getKey()));
+    public void updateText(ResourceBundle res) {
+        for (String name : buttons.keySet()) {
+            buttons.get(name).setText(res.getString(name));
+            buttons.get(name).setName(name);
         }
-        parameterWindow.setRes(res);
+        parameterWindow.setResourceBundle(res);
+        repaint();
     }
 
-    public class SimpleListener implements ActionListener {
+    private class SimpleListener implements ActionListener {
 
         @Override
         public void actionPerformed(ActionEvent e) {
             try {
-                ResourceBundle res = ResourceBundle.getBundle("Client.Resources.ButtonResources");
-                if (res.getString(e.getActionCommand()).equals("add")) {
-                    read.setCommand("add");
-                    read.prepare();
+                ResourceBundle resourceBundle = ResourceBundle.getBundle("Client.Resources.ButtonResources");
+                if (resourceBundle.getString(e.getActionCommand()).equals("add")) {
+                    addWindow.setCommandName("add");
+                    addWindow.prepare();
                 } else {
-                    writer.write(res.getString(e.getActionCommand()) + "\n");
-                    writer.flush();
+                    commandWriter.write(resourceBundle.getString(e.getActionCommand()) + "\n");
+                    commandWriter.flush();
                 }
             } catch (IOException ex) {
                 ex.printStackTrace();
@@ -78,12 +89,12 @@ public class ButtonPanel extends JPanel {
         }
     }
 
-    public class NotSimpleListener implements ActionListener {
+    private class NotSimpleListener implements ActionListener {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            ResourceBundle res = ResourceBundle.getBundle("Client.Resources.ButtonResources");
-            parameterWindow.setCommand(res.getString(e.getActionCommand()));
+            ResourceBundle resourceBundle = ResourceBundle.getBundle("Client.Resources.ButtonResources");
+            parameterWindow.setCommand(resourceBundle.getString(e.getActionCommand()));
             parameterWindow.setVisible(true);
         }
     }

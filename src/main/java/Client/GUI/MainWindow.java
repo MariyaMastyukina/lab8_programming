@@ -1,6 +1,7 @@
 package Client.GUI;
 
-import Server.ConnectionUtils.Request;
+import Utils.ConnectionUtils.Request;
+import Utils.UserUtils;
 
 import javax.swing.*;
 import java.awt.*;
@@ -11,57 +12,44 @@ import java.util.Locale;
 import java.util.ResourceBundle;
 
 public class MainWindow extends JFrame {
-    JComboBox<Locale> localCombo;
-    Request table;
-    CityTableModel tableModel;
-    ResourceBundle res;
-    static AddWindow readCity;
-    static UserInfoPanel infopanel;
-    ButtonPanel buttonPanel;
-    static JTextArea textArea;
-    JPanel cardLayout;
-    TablePanel tablePanel;
-    VisualObjectPanel visualPanel;
+    private JComboBox<Locale> localComboBox;
+    private Request request;
+    private CityTableModel cityTableModel;
+    private ResourceBundle resourceBundle;
+    private AddWindow addWindow;
+    private UserInfoPanel userInfoPanel;
+    private ButtonPanel buttonPanel;
+    private JTextArea textArea;
+    private JPanel cardLayout;
+    private TablePanel tablePanel;
+    private VisualObjectPanel visualPanel;
+    private PipedWriter commandWriter;
 
-    public MainWindow(Locale[] locales, PipedWriter cmdWriter, Request table, ResourceBundle res) {
-        super("LABA 8");
-        this.table = table;
+    public MainWindow(Locale[] locales, PipedWriter commandWriter, Request request, ResourceBundle resourceBundle, UserUtils userUtils) {
+        super("City_Builder_Visualizer");
+        this.request = request;
+        this.resourceBundle = resourceBundle;
+        this.commandWriter = commandWriter;
         int localIndex = 0;
         for (int i = 0; i < locales.length; i++) {
             if (Locale.getDefault().equals(locales[i])) localIndex = i;
         }
-        tableModel = new CityTableModel(res, table);
-        this.res = res;
-        readCity = new AddWindow(cmdWriter, this, res);
+        initComponents(locales, userUtils);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        tablePanel = new TablePanel(tableModel, cmdWriter, res, table);
-        visualPanel = new VisualObjectPanel(table, cmdWriter, res);
-        buttonPanel = new ButtonPanel(this, cmdWriter, res);
-        localCombo = new JComboBox<>(locales);
-        infopanel = new UserInfoPanel(cmdWriter, res, this, localCombo);
-        setCurrentlocale(locales[localIndex]);
+        setCurrentLocale(locales[localIndex]);
         Toolkit kit = Toolkit.getDefaultToolkit();
         Dimension screen = kit.getScreenSize();
         setBounds(screen.width / 5, screen.height / 5, screen.width * 4 / 5, screen.height * 4 / 5);
         setLayout(new BorderLayout());
-        textArea = new JTextArea(5, 50);
         JScrollPane scroll = new JScrollPane(textArea);
         add(scroll, BorderLayout.SOUTH);
-        add(infopanel, BorderLayout.NORTH);
-        cardLayout = new JPanel(new CardLayout());
-        cardLayout.add(tablePanel, "Таблица");
-        cardLayout.add(visualPanel, "Визуализация");
-        cardLayout.getLayout();
+        add(userInfoPanel, BorderLayout.NORTH);
         add(cardLayout, BorderLayout.CENTER);
         add(buttonPanel, BorderLayout.WEST);
-        localCombo.addActionListener(e -> {
-            setCurrentlocale((Locale) localCombo.getSelectedItem());
-            validate();
-        });
         addComponentListener(new ComponentListener() {
             @Override
             public void componentResized(ComponentEvent e) {
-                visualPanel.updateVisual(table.getNew_map());
+                visualPanel.updateVisual(request.getNewTable());
             }
 
             @Override
@@ -81,45 +69,56 @@ public class MainWindow extends JFrame {
         });
     }
 
-    public void readCity() {
-        readCity.prepare();
-    }
-
-    public static void addAnswer(String message) {
+    public void addAnswer(String message) {
         textArea.append(message + "\n");
     }
 
     public void setUserInfo(String user) {
-        infopanel.setUserLabel(user);
-    }
-
-    public void setCurrentlocale(Locale locale) {
-        res = ResourceBundle.getBundle("Client.Resources.ProgramResources", locale);
-        tablePanel.setRes(res);
-        tableModel.changeColumns(res);
-        tablePanel.updateColumns();
-        tablePanel.updateTime();
-        tablePanel.updateSort();
-        infopanel.updateText(res);
-        localCombo.setSelectedItem(locale);
-        buttonPanel.updateText(res);
-        visualPanel.setRes(res);
-        readCity.updateText(res);
-    }
-
-    public CityTableModel getTableModel() {
-        return tableModel;
+        userInfoPanel.setUserLabel(user);
     }
 
     public VisualObjectPanel getVisualPanel() {
         return visualPanel;
     }
 
-    public void setTableK(Request table) {
-        this.table = table;
+    public CityTableModel getCityTableModel() {
+        return cityTableModel;
     }
 
-    public void updateVisual(Request table) {
-        visualPanel.updateVisual(table.getNew_map());
+    private void initComponents(Locale[] locales, UserUtils userUtils) {
+        cityTableModel = new CityTableModel(resourceBundle, request);
+        addWindow = new AddWindow(commandWriter, this, resourceBundle);
+        tablePanel = new TablePanel(cityTableModel, commandWriter, resourceBundle, request, userUtils);
+        visualPanel = new VisualObjectPanel(request, commandWriter, resourceBundle, userUtils);
+        buttonPanel = new ButtonPanel(this, commandWriter, resourceBundle);
+        localComboBox = new JComboBox<>(locales);
+        userInfoPanel = new UserInfoPanel(commandWriter, resourceBundle, this, localComboBox, userUtils);
+        textArea = new JTextArea(5, 50);
+        cardLayout = new JPanel(new CardLayout());
+        cardLayout.add(tablePanel, "Таблица");
+        cardLayout.add(visualPanel, "Визуализация");
+        cardLayout.getLayout();
+        localComboBox.addActionListener(e -> {
+            setCurrentLocale((Locale) localComboBox.getSelectedItem());
+            validate();
+        });
+    }
+    
+    private void setCurrentLocale(Locale locale) {
+        resourceBundle = ResourceBundle.getBundle("Client.Resources.ProgramResources", locale);
+        tablePanel.setResourceBundle(resourceBundle);
+        cityTableModel.changeColumns(resourceBundle);
+        tablePanel.updateColumns();
+        tablePanel.updateTime();
+        tablePanel.updateSort();
+        userInfoPanel.updateText(resourceBundle);
+        localComboBox.setSelectedItem(locale);
+        buttonPanel.updateText(resourceBundle);
+        visualPanel.setResourceBundle(resourceBundle);
+        addWindow.updateText(resourceBundle);
+    }
+
+    public JPanel getCardLayout() {
+        return cardLayout;
     }
 }

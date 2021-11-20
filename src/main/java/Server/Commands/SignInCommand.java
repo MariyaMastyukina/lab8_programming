@@ -1,34 +1,43 @@
 package Server.Commands;
 
-import Client.DataUtils.CommandObject;
-import Server.ConnectionUtils.Request;
-import Server.DBUtils.UserDB;
 import Server.Launch.ControlUnit;
+import Utils.ConnectionUtils.Request;
+import Utils.DBUtils.UserDAO;
+import Utils.DataUtils.CommandUtils;
 
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
 import java.sql.SQLException;
 
 public class SignInCommand implements Command {
-    static int argsSize;
+    private final int argsSize = 0;
+    private final String name = "sign_in";
+    private final boolean isButton = false;
 
-    public SignInCommand(ControlUnit pusk) {
-        argsSize = 0;
-        pusk.addCommand("sign_in", this);
+    public SignInCommand(ControlUnit controlUnit) {
+        controlUnit.addCommand(name, this);
     }
 
     @Override
-    public Request execute(CommandObject user) throws IOException, SQLException, NoSuchAlgorithmException {
-        return new Request(UserDB.sign_in(user.getLogin(), user.getPassword()), null, null);
+    public Request execute(CommandUtils commandUtils) throws IOException, SQLException, NoSuchAlgorithmException {
+        String response = UserDAO.signIn(commandUtils.getLogin(), commandUtils.getPassword());
+        if (response == null)
+            return new Request("Вход произошел успешно", null, "Success");
+        return new Request(response, null, "Error");
     }
 
     @Override
     public String getName() {
-        return "sign_in";
+        return name;
     }
 
     @Override
-    public int getargsSize() {
+    public int getArgsSize() {
         return argsSize;
+    }
+
+    @Override
+    public boolean isButton() {
+        return isButton;
     }
 }

@@ -1,6 +1,6 @@
 package Server.Comparators;
 
-import Server.Collection.City;
+import Server.Model.City;
 
 import java.util.Comparator;
 
@@ -15,6 +15,6 @@ public class NameComparator implements Comparator<City> {
      */
     @Override
     public int compare(City city1, City city2) {
-        return city1.getNameCity().compareTo(city2.getNameCity());
+        return city1.getName().compareTo(city2.getName());
     }
 }

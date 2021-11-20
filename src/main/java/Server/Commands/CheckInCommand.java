@@ -1,34 +1,43 @@
 package Server.Commands;
 
-import Client.DataUtils.CommandObject;
-import Server.ConnectionUtils.Request;
-import Server.DBUtils.UserDB;
 import Server.Launch.ControlUnit;
+import Utils.ConnectionUtils.Request;
+import Utils.DBUtils.UserDAO;
+import Utils.DataUtils.CommandUtils;
 
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
 import java.sql.SQLException;
 
 public class CheckInCommand implements Command {
-    static int argsSize;
+    private final String name = "check_in";
+    private final int argsSize = 0;
+    private final boolean isButton = false;
 
-    public CheckInCommand(ControlUnit pusk) {
-        argsSize = 0;
-        pusk.addCommand("check_in", this);
+    public CheckInCommand(ControlUnit controlUnit) {
+        controlUnit.addCommand(name, this);
     }
 
     @Override
-    public Request execute(CommandObject CO) throws IOException, SQLException, NoSuchAlgorithmException {
-        return new Request(UserDB.check_in(CO.getLogin(), CO.getPassword()), null, null);
+    public Request execute(CommandUtils commandUtils) throws IOException, SQLException, NoSuchAlgorithmException {
+        String response = UserDAO.checkIn(commandUtils.getLogin(), commandUtils.getPassword());
+        if (response == null)
+            return new Request("Пользователь " + commandUtils.getNameCommand() + " зарегистрирован", null, "Success");
+        return new Request(response, null, "Error");
     }
 
     @Override
     public String getName() {
-        return "check_in";
+        return name;
     }
 
     @Override
-    public int getargsSize() {
+    public int getArgsSize() {
         return argsSize;
+    }
+
+    @Override
+    public boolean isButton() {
+        return isButton;
     }
 }

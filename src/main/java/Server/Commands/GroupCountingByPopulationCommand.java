@@ -1,54 +1,42 @@
 package Server.Commands;
 
-import Client.DataUtils.CommandObject;
-import Server.ConnectionUtils.Request;
-import Server.Launch.CollectWorker;
+import Server.Launch.CityService;
 import Server.Launch.ControlUnit;
+import Utils.ConnectionUtils.Request;
+import Utils.DataUtils.CommandUtils;
 
 import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.sql.SQLException;
 
-/**
- * Класс команды group_counting_by_population-группировка коллекции
- */
+
 public class GroupCountingByPopulationCommand implements Command {
-    CollectWorker coll;
-    static Logger LOGGER;
-    TypeCommand type;
-    static int argsSize;
+    private final CityService cityService;
+    private final int argsSize = 0;
+    private final String name = "group_counting_by_population";
+    private final boolean isButton = true;
 
-    /**
-     * Конструктор - создание нового объекта с определенными значениями
-     *
-     * @param p-          переменная для управления командами
-     * @param collection- переменнаяи для работы с коллекцией
-     */
-    public GroupCountingByPopulationCommand(CollectWorker collection, ControlUnit p) {
-        p.addCommand("group_counting_by_population", this);
-        this.coll = collection;
-        LOGGER = Logger.getLogger(GroupCountingByPopulationCommand.class.getName());
-        type = TypeCommand.INFORM;
-        argsSize = 0;
-
+    public GroupCountingByPopulationCommand(CityService cityService, ControlUnit controlUnit) throws IOException {
+        controlUnit.addCommand(name, this);
+        this.cityService = cityService;
     }
 
-    /**
-     * Функция выполнения команды
-     */
     @Override
-    public Request execute(CommandObject user) throws IOException {
-        LOGGER.log(Level.INFO, "Отправка результата выполнения команды на сервер");
-        return new Request(coll.group_counting_by_population(), null, null);
+    public Request execute(CommandUtils commandUtils) throws IOException, SQLException {
+        return cityService.groupCountingByPopulation();
     }
 
     @Override
     public String getName() {
-        return "group_counting_by_population";
+        return name;
     }
 
     @Override
-    public int getargsSize() {
+    public int getArgsSize() {
         return argsSize;
+    }
+
+    @Override
+    public boolean isButton() {
+        return isButton;
     }
 }

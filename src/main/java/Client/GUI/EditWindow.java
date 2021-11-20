@@ -1,6 +1,8 @@
 package Client.GUI;
 
-import Server.Collection.City;
+import Server.Model.City;
+import Utils.DataUtils.ValidationUtils;
+import Utils.GUIUtils;
 
 import javax.swing.*;
 import java.awt.*;
@@ -9,42 +11,99 @@ import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.io.PipedWriter;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.ResourceBundle;
 
 public class EditWindow extends JDialog {
-    private JTextField nameField = new JTextField();
-    private JTextField xField = new JTextField();
-    private JTextField yField = new JTextField();
-    private JTextField areaField = new JTextField();
-    private JTextField populationField = new JTextField();
-    private JTextField metersField = new JTextField();
-    private JTextField governorField = new JTextField();
-    private JPanel editPanel = new JPanel();
-    private JComboBox climateBox = new JComboBox();
-    private JComboBox governmentBox = new JComboBox();
-    private JComboBox capitalBox = new JComboBox();
-    private JLabel ownerLabel = new JLabel();
-    private JLabel timeLabel = new JLabel();
-    private JButton applyChangesButton = new JButton();
-    private JButton removeElementButton = new JButton();
-    private JLabel idLabel = new JLabel();
-    private JLabel ownerLocLabel = new JLabel();
-    private JLabel timeLocLabel = new JLabel();
-    private JLabel idLocLabel = new JLabel();
-    private JLabel nameLabel = new JLabel();
-    private JLabel xLabel = new JLabel();
-    private JLabel yLabel = new JLabel();
-    private JLabel areaLabel = new JLabel();
-    private JLabel populationLabel = new JLabel();
-    private JLabel metersLabel = new JLabel();
-    private JLabel capitalLabel = new JLabel();
-    private JLabel climateLabel = new JLabel();
-    private JLabel governmentLabel = new JLabel();
-    private JLabel governorLabel = new JLabel();
-    private PipedWriter cmdWriter;
+    private JPanel editPanel;
+    private JPanel buttonsPanel;
+    private JButton applyChangesButton;
+    private JButton removeElementButton;
+    private List<JTextField> fields;
+    private List<JComboBox> comboBoxes;
+    private List<JLabel> labels;
+    private JLabel idField;
+    private JTextField nameField;
+    private JTextField xField;
+    private JTextField yField;
+    private JLabel dateCreationField;
+    private JTextField areaField;
+    private JTextField populationField;
+    private JTextField metersField;
+    private JComboBox climateBox;
+    private JComboBox capitalBox;
+    private JComboBox governmentBox;
+    private JTextField governorField;
+    private JLabel ownerField;
+    private JLabel idLabel;
+    private JLabel nameLabel;
+    private JLabel xLabel;
+    private JLabel yLabel;
+    private JLabel dateCreationLabel;
+    private JLabel areaLabel;
+    private JLabel populationLabel;
+    private JLabel metersLabel;
+    private JLabel climateLabel;
+    private JLabel capitalLabel;
+    private JLabel governmentLabel;
+    private JLabel governorLabel;
+    private JLabel ownerLabel;
+    private PipedWriter commandWriter;
+    private ResourceBundle resourceBundle;
 
-    public EditWindow(HashMap<String, Object> defaultValues, PipedWriter cmdWriter, ResourceBundle res) {
+    public EditWindow(HashMap<String, Object> defaultValues, PipedWriter commandWriter, ResourceBundle resourceBundle) {
+        initWindow(defaultValues, commandWriter, resourceBundle);
+    }
+
+    EditWindow(City city, PipedWriter commandWriter, ResourceBundle resourceBundle) {
+        initWindow(GUIUtils.readDefaultValues(city), commandWriter, resourceBundle);
+    }
+
+    private void initWindow(Map<String, Object> defaultValues, PipedWriter commandWriter, ResourceBundle resourceBundle) {
+        this.commandWriter = commandWriter;
+        this.resourceBundle = resourceBundle;
+        initComponents(defaultValues);
+        setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+        add(editPanel, BorderLayout.CENTER);
+        add(buttonsPanel, BorderLayout.SOUTH);
+        Toolkit toolkit = Toolkit.getDefaultToolkit();
+        Dimension screen = toolkit.getScreenSize();
+        setSize(screen.width / 3, screen.height / 2);
+        setVisible(true);
+    }
+
+    private void initComponents(Map<String, Object> defaultValues) {
+        editPanel = new JPanel();
         editPanel.setLayout(new GridLayout(14, 1, 3, 5));
+        idField = new JLabel();
+        nameField = new JTextField();
+        xField = new JTextField();
+        yField = new JTextField();
+        dateCreationField = new JLabel();
+        areaField = new JTextField();
+        populationField = new JTextField();
+        metersField = new JTextField();
+        climateBox = new JComboBox();
+        capitalBox = new JComboBox();
+        governmentBox = new JComboBox();
+        governorField = new JTextField();
+        comboBoxes = List.of(capitalBox, climateBox, governmentBox);
+        fields = List.of(nameField, xField, yField, areaField, populationField, metersField, governorField);
+        idLabel = new JLabel();
+        nameLabel = new JLabel();
+        xLabel = new JLabel();
+        yLabel = new JLabel();
+        dateCreationLabel = new JLabel();
+        areaLabel = new JLabel();
+        populationLabel = new JLabel();
+        metersLabel = new JLabel();
+        climateLabel = new JLabel();
+        capitalLabel = new JLabel();
+        governmentLabel = new JLabel();
+        governorLabel = new JLabel();
+        labels = List.of(idLabel, nameLabel, xLabel, yLabel, dateCreationLabel, areaLabel, populationLabel, metersLabel, capitalLabel, climateLabel, governmentLabel, governorLabel);
+
         climateBox.addItem("");
         climateBox.addItem("HUMIDCONTINENTAL");
         climateBox.addItem("SUBARCTIC");
@@ -56,16 +115,16 @@ public class EditWindow extends JDialog {
         governmentBox.addItem("CORPORATOCRACY");
         governmentBox.addItem("MERITOCRACY");
         governmentBox.addItem("OLIGARCHY");
-        editPanel.add(idLocLabel);
         editPanel.add(idLabel);
+        editPanel.add(idField);
         editPanel.add(nameLabel);
         editPanel.add(nameField);
         editPanel.add(xLabel);
         editPanel.add(xField);
         editPanel.add(yLabel);
         editPanel.add(yField);
-        editPanel.add(timeLocLabel);
-        editPanel.add(timeLabel);
+        editPanel.add(dateCreationLabel);
+        editPanel.add(dateCreationField);
         editPanel.add(areaLabel);
         editPanel.add(areaField);
         editPanel.add(populationLabel);
@@ -80,168 +139,44 @@ public class EditWindow extends JDialog {
         editPanel.add(governmentBox);
         editPanel.add(governorLabel);
         editPanel.add(governorField);
-        editPanel.add(ownerLocLabel);
         editPanel.add(ownerLabel);
-        this.cmdWriter = cmdWriter;
-        if (defaultValues.get("climate") != null) {
-            climateBox.setSelectedItem(defaultValues.get("climate").toString());
-        } else {
-            climateBox.setSelectedItem("");
-        }
-        if (defaultValues.get(res.getString("government")) != null) {
-            governmentBox.setSelectedItem(defaultValues.get("government").toString());
-        } else {
-            governmentBox.setSelectedItem("");
-        }
-        if (defaultValues.get("capital") != null) {
-            capitalBox.setSelectedItem(defaultValues.get("capital").toString());
-        } else {
-            capitalBox.setSelectedItem("");
-        }
+        editPanel.add(ownerField);
+        fillFields(defaultValues);
+
+        buttonsPanel = new JPanel(new GridLayout(1, 2));
+        applyChangesButton = new JButton();
+        removeElementButton = new JButton();
+
+        removeElementButton.setText(resourceBundle.getString("removeElement"));
+        applyChangesButton.setText(resourceBundle.getString("applyChanges"));
+        removeElementButton.addActionListener(new ClearListener());
+        applyChangesButton.addActionListener(new UpdateListener(this));
+
+        buttonsPanel.add(removeElementButton);
+        buttonsPanel.add(applyChangesButton);
+    }
+
+    private void fillFields(Map<String, Object> defaultValues) {
+        idField.setText(defaultValues.get("id").toString());
         nameField.setText(defaultValues.get("name").toString());
-        ownerLabel.setText(defaultValues.get("user").toString());
-        timeLabel.setText(defaultValues.get("date").toString());
-        idLabel.setText(defaultValues.get("id").toString());
         xField.setText(defaultValues.get("x").toString());
         yField.setText(defaultValues.get("y").toString());
+        dateCreationField.setText(defaultValues.get("date").toString());
         areaField.setText(defaultValues.get("area").toString());
         populationField.setText(defaultValues.get("population").toString());
         metersField.setText(defaultValues.get("meters").toString());
         governorField.setText(defaultValues.get("governor").toString());
-        ownerLocLabel.setText(res.getString("owner"));
-        timeLocLabel.setText(res.getString("time"));
-        idLocLabel.setText(res.getString("id"));
-        nameLabel.setText(res.getString("name"));
-        xLabel.setText(res.getString("x"));
-        yLabel.setText(res.getString("y"));
-        areaLabel.setText(res.getString("area"));
-        populationLabel.setText(res.getString("population"));
-        metersLabel.setText(res.getString("meters"));
-        capitalLabel.setText(res.getString("capital"));
-        climateLabel.setText(res.getString("climate"));
-        governmentLabel.setText(res.getString("government"));
-        governorLabel.setText(res.getString("governor"));
-        setDefaultCloseOperation(DISPOSE_ON_CLOSE);
-        ClearListener clearListener = new ClearListener();
-        UpdateListener updateListener = new UpdateListener(this);
-        removeElementButton.setText(res.getString("removeElement"));
-        applyChangesButton.setText(res.getString("applyChanges"));
-        removeElementButton.addActionListener(clearListener);
-        applyChangesButton.addActionListener(updateListener);
-        JPanel panel = new JPanel(new GridLayout(1, 2));
-        panel.add(removeElementButton);
-        panel.add(applyChangesButton);
-        add(editPanel, BorderLayout.CENTER);
-        add(panel, BorderLayout.SOUTH);
-        Toolkit toolkit = Toolkit.getDefaultToolkit();
-        Dimension screen = toolkit.getScreenSize();
-        setSize(screen.width / 3, screen.height / 2);
-        setVisible(true);
+        ownerField.setText(defaultValues.get("user").toString());
+        GUIUtils.fillFields(defaultValues, resourceBundle, labels, comboBoxes);
     }
 
-    EditWindow(City city, PipedWriter cmdWriter, ResourceBundle res) {
-        editPanel.setLayout(new GridLayout(14, 1, 3, 5));
-        climateBox.addItem("");
-        climateBox.addItem("HUMIDCONTINENTAL");
-        climateBox.addItem("SUBARCTIC");
-        climateBox.addItem("TUNDRA");
-        capitalBox.addItem("");
-        capitalBox.addItem("true");
-        capitalBox.addItem("false");
-        governmentBox.addItem("");
-        governmentBox.addItem("CORPORATOCRACY");
-        governmentBox.addItem("MERITOCRACY");
-        governmentBox.addItem("OLIGARCHY");
-        editPanel.add(idLocLabel);
-        editPanel.add(idLabel);
-        editPanel.add(nameLabel);
-        editPanel.add(nameField);
-        editPanel.add(xLabel);
-        editPanel.add(xField);
-        editPanel.add(yLabel);
-        editPanel.add(yField);
-        editPanel.add(timeLocLabel);
-        editPanel.add(timeLabel);
-        editPanel.add(areaLabel);
-        editPanel.add(areaField);
-        editPanel.add(populationLabel);
-        editPanel.add(populationField);
-        editPanel.add(metersLabel);
-        editPanel.add(metersField);
-        editPanel.add(capitalLabel);
-        editPanel.add(capitalBox);
-        editPanel.add(climateLabel);
-        editPanel.add(climateBox);
-        editPanel.add(governmentLabel);
-        editPanel.add(governmentBox);
-        editPanel.add(governorLabel);
-        editPanel.add(governorField);
-        editPanel.add(ownerLocLabel);
-        editPanel.add(ownerLabel);
-        this.cmdWriter = cmdWriter;
-        if (city.getClimate() != null) {
-            climateBox.setSelectedItem(city.getClimate().toString());
-        } else {
-            climateBox.setSelectedItem("");
-        }
-        if (city.getGovernment() != null) {
-            governmentBox.setSelectedItem(city.getGovernment().toString());
-        } else {
-            governmentBox.setSelectedItem("");
-        }
-        if (city.getCapital() != null) {
-            capitalBox.setSelectedItem(city.getCapital().toString());
-        } else {
-            capitalBox.setSelectedItem("");
-        }
-        nameField.setText(city.getNameCity());
-        ownerLabel.setText(city.getUser());
-        timeLabel.setText(city.getCreationDate().toString());
-        idLabel.setText(String.valueOf(city.getIdOfCity()));
-        xField.setText(String.valueOf(city.getCoordinates().getX()));
-        yField.setText(String.valueOf(city.getCoordinates().getY()));
-        areaField.setText(String.valueOf(city.getArea()));
-        populationField.setText(String.valueOf(city.getPopulation()));
-        metersField.setText(String.valueOf(city.getMetersAboveSeaLevel()));
-        governorField.setText(city.getGovernor().toString());
-        ownerLocLabel.setText(res.getString("owner"));
-        timeLocLabel.setText(res.getString("time"));
-        idLocLabel.setText(res.getString("id"));
-        nameLabel.setText(res.getString("name"));
-        xLabel.setText(res.getString("x"));
-        yLabel.setText(res.getString("y"));
-        areaLabel.setText(res.getString("area"));
-        populationLabel.setText(res.getString("population"));
-        metersLabel.setText(res.getString("meters"));
-        capitalLabel.setText(res.getString("capital"));
-        climateLabel.setText(res.getString("climate"));
-        governmentLabel.setText(res.getString("government"));
-        governorLabel.setText(res.getString("governor"));
-        ClearListener clearListener = new ClearListener();
-        UpdateListener updateListener = new UpdateListener(this);
-        removeElementButton.addActionListener(clearListener);
-        applyChangesButton.addActionListener(updateListener);
-        removeElementButton.setText(res.getString("removeElement"));
-        applyChangesButton.setText(res.getString("applyChanges"));
-        JPanel panel = new JPanel(new GridLayout(1, 2));
-        panel.add(removeElementButton);
-        panel.add(applyChangesButton);
-        add(editPanel, BorderLayout.CENTER);
-        add(panel, BorderLayout.SOUTH);
-        Toolkit toolkit = Toolkit.getDefaultToolkit();
-        Dimension screen = toolkit.getScreenSize();
-        setSize(screen.width / 3, screen.height / 2);
-        setDefaultCloseOperation(DISPOSE_ON_CLOSE);
-        setVisible(true);
-    }
-
-    public class ClearListener implements ActionListener {
+    private class ClearListener implements ActionListener {
 
         @Override
         public void actionPerformed(ActionEvent e) {
             try {
-                cmdWriter.write("remove_by_id " + idLabel.getText() + "\n");
-                cmdWriter.flush();
+                commandWriter.write("remove_by_id " + idLabel.getText() + "\n");
+                commandWriter.flush();
                 setVisible(false);
             } catch (IOException ex) {
                 ex.printStackTrace();
@@ -249,7 +184,7 @@ public class EditWindow extends JDialog {
         }
     }
 
-    public class UpdateListener implements ActionListener {
+    private class UpdateListener implements ActionListener {
         Component component;
 
         UpdateListener(Component component) {
@@ -259,19 +194,19 @@ public class EditWindow extends JDialog {
         @Override
         public void actionPerformed(ActionEvent e) {
             try {
-                if (checkFields(component)) {
-                    cmdWriter.write("update " + idLabel.getText() + "\n");
-                    cmdWriter.write(nameField.getText() + "\n");
-                    cmdWriter.write(xField.getText() + "\n");
-                    cmdWriter.write(yField.getText() + "\n");
-                    cmdWriter.write(areaField.getText() + "\n");
-                    cmdWriter.write(populationField.getText() + "\n");
-                    cmdWriter.write(metersField.getText() + "\n");
-                    cmdWriter.write(capitalBox.getSelectedItem().toString() + "\n");
-                    cmdWriter.write(climateBox.getSelectedItem().toString() + "\n");
-                    cmdWriter.write(governmentBox.getSelectedItem().toString() + "\n");
-                    cmdWriter.write(governorField.getText() + "\n");
-                    cmdWriter.flush();
+                if (ValidationUtils.checkFields(fields, component, comboBoxes)) {
+                    commandWriter.write("update " + idLabel.getText() + "\n");
+                    commandWriter.write(nameField.getText() + "\n");
+                    commandWriter.write(xField.getText() + "\n");
+                    commandWriter.write(yField.getText() + "\n");
+                    commandWriter.write(areaField.getText() + "\n");
+                    commandWriter.write(populationField.getText() + "\n");
+                    commandWriter.write(metersField.getText() + "\n");
+                    commandWriter.write(capitalBox.getSelectedItem().toString() + "\n");
+                    commandWriter.write(climateBox.getSelectedItem().toString() + "\n");
+                    commandWriter.write(governmentBox.getSelectedItem().toString() + "\n");
+                    commandWriter.write(governorField.getText() + "\n");
+                    commandWriter.flush();
                     setVisible(false);
                 }
             } catch (IOException ex) {
@@ -280,139 +215,5 @@ public class EditWindow extends JDialog {
                 JOptionPane.showMessageDialog(component, ex.getMessage(), "ОШИБКА", JOptionPane.ERROR_MESSAGE);
             }
         }
-    }
-
-    public boolean checkFields(Component component) {
-        boolean checker;
-        if (nameField.getText().isEmpty()) {
-            checker = false;
-            JOptionPane.showMessageDialog(component, "Имя города не может быть пустым", "Error", JOptionPane.ERROR_MESSAGE);
-        } else if (xField.getText().isEmpty()) {
-            checker = false;
-            JOptionPane.showMessageDialog(component, "Координата Х не может быть пустой", "Error", JOptionPane.ERROR_MESSAGE);
-        } else if (!checkX(xField.getText(), component)) {
-            checker = false;
-        } else if (yField.getText().isEmpty()) {
-            checker = false;
-            JOptionPane.showMessageDialog(component, "Координата Y не может быть пустой", "Error", JOptionPane.ERROR_MESSAGE);
-        } else if (!checkY(yField.getText(), component)) {
-            checker = false;
-        } else if (areaField.getText().isEmpty()) {
-            checker = false;
-            JOptionPane.showMessageDialog(component, "Площадь не может быть пустой", "Error", JOptionPane.ERROR_MESSAGE);
-
-        } else if (!checkArea(areaField.getText(), component)) {
-            checker = false;
-        } else if (populationField.getText().isEmpty()) {
-            checker = false;
-            JOptionPane.showMessageDialog(component, "Население не может быть пустым", "Error", JOptionPane.ERROR_MESSAGE);
-        } else if (!checkPopulation(populationField.getText(), component)) {
-            checker = false;
-        } else if (!checkMeters(metersField.getText(), component)) {
-            checker = false;
-        } else if (capitalBox.getSelectedItem().equals("")) {
-            checker = false;
-            JOptionPane.showMessageDialog(component, "Выберите столицу", "Error", JOptionPane.ERROR_MESSAGE);
-        } else if (climateBox.getSelectedItem().equals("")) {
-            checker = false;
-            JOptionPane.showMessageDialog(component, "Выберите климат", "Error", JOptionPane.ERROR_MESSAGE);
-        } else if (governmentBox.getSelectedItem().equals("")) {
-            checker = false;
-            JOptionPane.showMessageDialog(component, "Выберите правительство", "Error", JOptionPane.ERROR_MESSAGE);
-        } else if (governorField.getText().isEmpty()) {
-            checker = false;
-            JOptionPane.showMessageDialog(component, "Имя губернатора не может быть пустым", "Error", JOptionPane.ERROR_MESSAGE);
-        } else {
-            checker = checkName(governorField.getText(), component);
-        }
-        return checker;
-    }
-
-    public boolean checkX(String x, Component component) {
-        boolean checker = true;
-        try {
-            Float X = Float.parseFloat(x);
-            if (X <= -375F) {
-                checker = false;
-                JOptionPane.showMessageDialog(component, "Указано неверное значение координаты X. Значение не может быть меньше -375", "Error", JOptionPane.ERROR_MESSAGE);
-            }
-        } catch (NumberFormatException e) {
-            checker = false;
-            JOptionPane.showMessageDialog(component, "Указан неверный формат координаты Х", "Error", JOptionPane.ERROR_MESSAGE);
-        }
-        return checker;
-    }
-
-    public boolean checkY(String y, Component component) {
-        boolean checker = true;
-        try {
-            Integer Y = Integer.parseInt(y);
-            if (Y <= -966) {
-                checker = false;
-                JOptionPane.showMessageDialog(component, "Указан неверное значение координаты Y. Значение не может быть меньше -966", "Error", JOptionPane.ERROR_MESSAGE);
-            }
-        } catch (NumberFormatException e) {
-            checker = false;
-            JOptionPane.showMessageDialog(component, "Указан неверный формат координаты Y", "Error", JOptionPane.ERROR_MESSAGE);
-        }
-        return checker;
-    }
-
-    public boolean checkArea(String area, Component component) {
-        boolean checker = true;
-        try {
-            Double AREA = Double.parseDouble(area);
-            if (AREA <= 0) {
-                checker = false;
-                JOptionPane.showMessageDialog(component, "Указано неверное значение площади города. Значение не может быть отрицательным или равным 0", "Error", JOptionPane.ERROR_MESSAGE);
-            }
-        } catch (NumberFormatException e) {
-            checker = false;
-            JOptionPane.showMessageDialog(component, "Указан неверный формат площади города", "Error", JOptionPane.ERROR_MESSAGE);
-        }
-        return checker;
-    }
-
-    public boolean checkPopulation(String population, Component component) {
-        boolean checker = true;
-        try {
-            Integer Population = Integer.parseInt(population);
-            if (Population <= 0) {
-                checker = false;
-                JOptionPane.showMessageDialog(component, "Указано неверное значение населения города. Значение не может быть отрицательным или равным 0", "Error", JOptionPane.ERROR_MESSAGE);
-            }
-        } catch (NumberFormatException e) {
-            checker = false;
-            JOptionPane.showMessageDialog(component, "Указан неверный формат населения", "Error", JOptionPane.ERROR_MESSAGE);
-        }
-        return checker;
-    }
-
-    public boolean checkName(String name, Component component) {
-        boolean checker = true;
-        char[] symbols = name.toLowerCase().toCharArray();
-        Boolean checkername1 = true;
-        String validationName = "abcdefghijklmnopqrstuvwxyzабвгдеёжзийклмнопрстуфхцчшщъыьэюя";
-        for (char c : symbols) {
-            if (validationName.indexOf(c) == -1) {
-                checkername1 = false;
-            }
-        }
-        if (!checkername1) {
-            checker = false;
-            JOptionPane.showMessageDialog(component, "Указано неверное имя губернатора. Используйте только латинские символы", "Error", JOptionPane.ERROR_MESSAGE);
-        }
-        return checker;
-    }
-
-    public boolean checkMeters(String name, Component component) {
-        boolean checker = true;
-        try {
-            Integer.parseInt(name);
-        } catch (NumberFormatException e) {
-            checker = false;
-            JOptionPane.showMessageDialog(component, "Указан неверный формат метров", "Error", JOptionPane.ERROR_MESSAGE);
-        }
-        return checker;
     }
 }

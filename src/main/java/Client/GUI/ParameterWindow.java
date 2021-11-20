@@ -10,45 +10,48 @@ import java.io.PipedWriter;
 import java.util.ResourceBundle;
 
 public class ParameterWindow extends JDialog {
-    private JLabel label = new JLabel();
-    private JButton button;
-    private JTextField textField = new JTextField();
-    private PipedWriter writer;
+    private JLabel parameterLabel = new JLabel();
+    private JButton confirmButton;
+    private JTextField parameterField = new JTextField();
+    private PipedWriter commandWriter;
     private String command = "";
-    private ResourceBundle res;
-    private AddWindow read;
+    private ResourceBundle resourceBundle;
+    private AddWindow addWindow;
 
-    public ParameterWindow(JFrame frame, PipedWriter writer, ResourceBundle res, AddWindow read) {
-        super(frame, res.getString("input"), true);
-        this.res = res;
-//        read=new AddWindow(writer,frame,res);
-        this.read = read;
-        button = new JButton(res.getString("confirm"));
-        setDefaultCloseOperation(DISPOSE_ON_CLOSE);
-        this.writer = writer;
+    public ParameterWindow(JFrame frame, PipedWriter commandWriter, ResourceBundle resourceBundle, AddWindow addWindow) {
+        super(frame, resourceBundle.getString("input"), true);
+        this.resourceBundle = resourceBundle;
+        this.addWindow = addWindow;
+        this.commandWriter = commandWriter;
+        initComponents();
         Toolkit kit = Toolkit.getDefaultToolkit();
         Dimension screen = kit.getScreenSize();
         setBounds(screen.width / 5, screen.height / 5, screen.width / 3, screen.width / 3);
         setLayout(new BorderLayout());
-        label.setText(res.getString("requireSimple") + command);
-        add(label, BorderLayout.NORTH);
-        add(textField, BorderLayout.CENTER);
-        add(button, BorderLayout.SOUTH);
-        button.addActionListener(new buttonListener(this));
+        setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+        add(parameterLabel, BorderLayout.NORTH);
+        add(parameterField, BorderLayout.CENTER);
+        add(confirmButton, BorderLayout.SOUTH);
     }
 
-    public void setRes(ResourceBundle res) {
-        this.res = res;
+    public void setResourceBundle(ResourceBundle resourceBundle) {
+        this.resourceBundle = resourceBundle;
     }
 
     public void setCommand(String command) {
         this.command = command;
     }
 
-    public class buttonListener implements ActionListener {
+    private void initComponents() {
+        confirmButton = new JButton(resourceBundle.getString("confirm"));
+        parameterLabel.setText(resourceBundle.getString("requireSimple") + command);
+        confirmButton.addActionListener(new confirmButtonListener(this));
+
+    }
+    private class confirmButtonListener implements ActionListener {
         Component component;
 
-        buttonListener(Component component) {
+        confirmButtonListener(Component component) {
             this.component = component;
         }
 
@@ -56,18 +59,18 @@ public class ParameterWindow extends JDialog {
         public void actionPerformed(ActionEvent e) {
 
             try {
-                if (checkParameter(textField.getText(), component)) {
+                if (checkParameter(parameterField.getText(), component)) {
                     if (command.equals("update")) {
                         setVisible(false);
-                        read.setCommand(command + " " + textField.getText());
-                        read.prepare();
+                        addWindow.setCommandName(command + " " + parameterField.getText());
+                        addWindow.prepare();
                     } else {
-                        String line = command + " " + textField.getText();
-                        writer.write(line + "\n");
-                        writer.flush();
+                        String line = command + " " + parameterField.getText();
+                        commandWriter.write(line + "\n");
+                        commandWriter.flush();
                         setVisible(false);
                     }
-                    textField.setText("");
+                    parameterField.setText("");
                 }
             } catch (IOException ex) {
                 ex.printStackTrace();
@@ -75,7 +78,7 @@ public class ParameterWindow extends JDialog {
         }
     }
 
-    public boolean checkParameter(String par, Component component) {
+    private boolean checkParameter(String par, Component component) {
         boolean checker = true;
         if (par.isEmpty()) {
             checker = false;

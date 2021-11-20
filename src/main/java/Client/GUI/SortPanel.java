@@ -11,8 +11,8 @@ import java.util.ResourceBundle;
 public class SortPanel extends JPanel {
     public SortPanel(ResourceBundle res, PipedWriter writer) {
         setLayout(new GridLayout(1, 13));
-        JButton sort1 = new JButton(res.getString("sort"));
-        sort1.addActionListener(e -> {
+        JButton sortId = new JButton(res.getString("sort"));
+        sortId.addActionListener(e -> {
             try {
                 writer.write("sort id\n");
                 writer.flush();
@@ -20,9 +20,9 @@ public class SortPanel extends JPanel {
                 ex.printStackTrace();
             }
         });
-        add(sort1);
-        JButton sort2 = new JButton(res.getString("sort"));
-        sort2.addActionListener(new ActionListener() {
+        add(sortId);
+        JButton sortName = new JButton(res.getString("sort"));
+        sortName.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 try {
@@ -33,9 +33,9 @@ public class SortPanel extends JPanel {
                 }
             }
         });
-        add(sort2);
-        JButton sort3 = new JButton(res.getString("sort"));
-        sort3.addActionListener(new ActionListener() {
+        add(sortName);
+        JButton sortX = new JButton(res.getString("sort"));
+        sortX.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 try {
@@ -47,9 +47,9 @@ public class SortPanel extends JPanel {
                 }
             }
         });
-        add(sort3);
-        JButton sort4 = new JButton(res.getString("sort"));
-        sort4.addActionListener(new ActionListener() {
+        add(sortX);
+        JButton sortY = new JButton(res.getString("sort"));
+        sortY.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 try {
@@ -61,9 +61,9 @@ public class SortPanel extends JPanel {
                 }
             }
         });
-        add(sort4);
-        JButton sort5 = new JButton(res.getString("sort"));
-        sort5.addActionListener(new ActionListener() {
+        add(sortY);
+        JButton sortDate = new JButton(res.getString("sort"));
+        sortDate.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 try {
@@ -74,9 +74,9 @@ public class SortPanel extends JPanel {
                 }
             }
         });
-        add(sort5);
-        JButton sort6 = new JButton(res.getString("sort"));
-        sort6.addActionListener(new ActionListener() {
+        add(sortDate);
+        JButton sortArea = new JButton(res.getString("sort"));
+        sortArea.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 try {
@@ -87,9 +87,9 @@ public class SortPanel extends JPanel {
                 }
             }
         });
-        add(sort6);
-        JButton sort7 = new JButton(res.getString("sort"));
-        sort7.addActionListener(e -> {
+        add(sortArea);
+        JButton sortPopulation = new JButton(res.getString("sort"));
+        sortPopulation.addActionListener(e -> {
             try {
                 writer.write("sort population\n");
                 writer.flush();
@@ -97,9 +97,9 @@ public class SortPanel extends JPanel {
                 ex.printStackTrace();
             }
         });
-        add(sort7);
-        JButton sort8 = new JButton(res.getString("sort"));
-        sort8.addActionListener(new ActionListener() {
+        add(sortPopulation);
+        JButton sortMetersAboveSeaLevel = new JButton(res.getString("sort"));
+        sortMetersAboveSeaLevel.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 try {
@@ -111,9 +111,9 @@ public class SortPanel extends JPanel {
                 }
             }
         });
-        add(sort8);
-        JButton sort9 = new JButton(res.getString("sort"));
-        sort9.addActionListener(e -> {
+        add(sortMetersAboveSeaLevel);
+        JButton sortCapital = new JButton(res.getString("sort"));
+        sortCapital.addActionListener(e -> {
             try {
                 writer.write("sort capital\n");
                 writer.flush();
@@ -122,9 +122,9 @@ public class SortPanel extends JPanel {
                 ex.printStackTrace();
             }
         });
-        add(sort9);
-        JButton sort10 = new JButton(res.getString("sort"));
-        sort10.addActionListener(e -> {
+        add(sortCapital);
+        JButton sortClimate = new JButton(res.getString("sort"));
+        sortClimate.addActionListener(e -> {
             try {
                 writer.write("sort climate\n");
                 writer.flush();
@@ -133,9 +133,9 @@ public class SortPanel extends JPanel {
                 ex.printStackTrace();
             }
         });
-        add(sort10);
-        JButton sort11 = new JButton(res.getString("sort"));
-        sort11.addActionListener(e -> {
+        add(sortClimate);
+        JButton sortGovernment = new JButton(res.getString("sort"));
+        sortGovernment.addActionListener(e -> {
             try {
                 writer.write("sort government\n");
                 writer.flush();
@@ -144,9 +144,9 @@ public class SortPanel extends JPanel {
                 ex.printStackTrace();
             }
         });
-        add(sort11);
-        JButton sort12 = new JButton(res.getString("sort"));
-        sort12.addActionListener(e -> {
+        add(sortGovernment);
+        JButton sortGovernor = new JButton(res.getString("sort"));
+        sortGovernor.addActionListener(e -> {
             try {
                 writer.write("sort governor\n");
                 writer.flush();
@@ -155,9 +155,9 @@ public class SortPanel extends JPanel {
                 ex.printStackTrace();
             }
         });
-        add(sort12);
-        JButton sort13 = new JButton(res.getString("sort"));
-        sort13.addActionListener(e -> {
+        add(sortGovernor);
+        JButton sortUser = new JButton(res.getString("sort"));
+        sortUser.addActionListener(e -> {
             try {
                 writer.write("sort user\n");
                 writer.flush();
@@ -166,7 +166,7 @@ public class SortPanel extends JPanel {
                 ex.printStackTrace();
             }
         });
-        add(sort13);
+        add(sortUser);
     }
 
     public void updateSort(ResourceBundle res) {

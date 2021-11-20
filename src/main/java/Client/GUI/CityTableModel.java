@@ -1,42 +1,43 @@
 package Client.GUI;
 
-import Server.Collection.City;
-import Server.ConnectionUtils.Request;
+import Server.Model.City;
+import Utils.ConnectionUtils.Request;
 
 import javax.swing.table.AbstractTableModel;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.ResourceBundle;
-import java.util.Vector;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 public class CityTableModel extends AbstractTableModel {
-    private Vector<String> columns;
-    private Vector<Vector<Object>> data = new Vector<>();
+    private List<String> columns;
+    private List<List<String>> data = new ArrayList<>();
 
-    CityTableModel(ResourceBundle res, Request table) {
-        changeColumns(res);
-        updateTable(table.getNew_map());
+    public CityTableModel(ResourceBundle resourceBundle, Request request) {
+        changeColumns(resourceBundle);
+        updateTable(request.getNewTable());
     }
 
-    public void changeColumns(ResourceBundle res) {
-        columns = new Vector<>(Arrays.asList(
-                res.getString("id"),
-                res.getString("name"),
-                res.getString("x"),
-                res.getString("y"),
-                res.getString("time"),
-                res.getString("area"),
-                res.getString("population"),
-                res.getString("meters"),
-                res.getString("capital"),
-                res.getString("climate"),
-                res.getString("government"),
-                res.getString("governor"),
-                res.getString("owner")
+    public void changeColumns(ResourceBundle resourceBundle) {
+        columns = new ArrayList<>(Arrays.asList(
+                resourceBundle.getString("id"),
+                resourceBundle.getString("name"),
+                resourceBundle.getString("x"),
+                resourceBundle.getString("y"),
+                resourceBundle.getString("time"),
+                resourceBundle.getString("area"),
+                resourceBundle.getString("population"),
+                resourceBundle.getString("meters"),
+                resourceBundle.getString("capital"),
+                resourceBundle.getString("climate"),
+                resourceBundle.getString("government"),
+                resourceBundle.getString("governor"),
+                resourceBundle.getString("owner")
         ));
     }
 
-    public Vector<String> getColumns() {
+    public List<String> getColumns() {
         return columns;
     }
 
@@ -55,13 +56,14 @@ public class CityTableModel extends AbstractTableModel {
 
     @Override
     public Object getValueAt(int rowIndex, int columnIndex) {
+        System.out.println();
         return data.get(rowIndex).get(columnIndex);
     }
 
-    public Vector<Vector<Object>> updateTable(CopyOnWriteArrayList<City> list) {
-        data = new Vector<>();
-        for (City e : list) {
-            Vector<Object> row = new Vector<>(Arrays.asList(e.getDataRow()));
+    public List<List<String>> updateTable(CopyOnWriteArrayList<City> cities) {
+        data = new ArrayList<>();
+        for (City e : cities) {
+            List<String> row = new ArrayList<>(e.getRow());
             data.add(row);
         }
         fireTableDataChanged();

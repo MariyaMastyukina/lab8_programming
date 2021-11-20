@@ -14,6 +14,7 @@ public class ButtonResources extends ListResourceBundle {
             {"Удалить последний", "remove_last"},
             {"Обновить", "update"},
             {"Выполнить скрипт", "execute_script"},
+            {"Помощь", "help"},
 
             {"Lisätä", "add"},
             {"Asia selvä", "clear"},
@@ -25,6 +26,7 @@ public class ButtonResources extends ListResourceBundle {
             {"Poista viimeinen", "remove_last"},
             {"Virkistää", "update"},
             {"Suorita komentosarja", "execute_script"},
+            {"Apua", "help"},
 
             {"Добави", "add"},
             {"Ясно", "clear"},
@@ -36,6 +38,7 @@ public class ButtonResources extends ListResourceBundle {
             {"Изтриване последно", "remove_last"},
             {"Обновяване", "update"},
             {"Изпълнете скрипт", "execute_script"},
+            {"Помощ", "help"},
 
             {"Añadir", "add"},
             {"Claro", "clear"},
@@ -47,6 +50,8 @@ public class ButtonResources extends ListResourceBundle {
             {"Eliminar último", "remove_last"},
             {"Actualizar", "update"},
             {"Ejecutar script", "execute_script"},
+            {"Ejecutar script", "execute_script"},
+            {"Ayuda", "help"}
     };
 
     @Override

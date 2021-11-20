@@ -1,6 +1,6 @@
 package Server.Comparators;
 
-import Server.Collection.City;
+import Server.Model.City;
 
 import java.util.Comparator;
 

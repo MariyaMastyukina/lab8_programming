@@ -1,6 +1,7 @@
 package Client.GUI;
 
-import Client.DataUtils.User;
+
+import Utils.UserUtils;
 
 import javax.swing.*;
 import java.awt.*;
@@ -10,59 +11,74 @@ import java.util.Locale;
 import java.util.ResourceBundle;
 
 public class UserInfoPanel extends JPanel {
-    MainWindow frame;
-    JButton user = new JButton();
-    JButton table = new JButton();
-    JButton visual = new JButton();
-    static JLabel label = new JLabel();
-    static JLabel labelUser = new JLabel();
-    PipedWriter writer;
+    private MainWindow mainWindow;
+    private JButton logOut;
+    private JButton tableButton;
+    private JButton visualButton;
+    private JLabel label;
+    private JLabel labelUser;
+    private PipedWriter commandWriter;
+    private ResourceBundle resourceBundle;
+    private JPanel userInfoPanel;
+    private JPanel buttonPanel;
 
-    public UserInfoPanel(PipedWriter writer, ResourceBundle res, MainWindow frame, JComboBox<Locale> localCombo) {
-        this.writer = writer;
-        this.frame = frame;
+    public UserInfoPanel(PipedWriter commandWriter, ResourceBundle resourceBundle, MainWindow mainWindow, JComboBox<Locale> localCombo, UserUtils userUtils) {
+        this.commandWriter = commandWriter;
+        this.resourceBundle = resourceBundle;
+        this.mainWindow = mainWindow;
+        initComponents(localCombo, userUtils);
         setLayout(new BorderLayout());
-        label.setText(res.getString("enteredAs"));
-        JPanel panel1 = new JPanel(new GridLayout(2, 1));
-        panel1.add(label);
-        panel1.add(labelUser);
-        user.setText(res.getString("changeUser"));
-        user.addActionListener(e -> {
-            User.permission = false;
+        add(userInfoPanel, BorderLayout.WEST);
+        add(buttonPanel, BorderLayout.CENTER);
+    }
+
+    private void initComponents(JComboBox<Locale> localCombo, UserUtils userUtils) {
+        userInfoPanel = new JPanel(new GridLayout(2, 1));
+        labelUser = new JLabel();
+        labelUser.setText(userUtils.getLogin());
+        label = new JLabel();
+        label.setText(resourceBundle.getString("enteredAs"));
+        logOut = new JButton();
+        logOut.setText(resourceBundle.getString("changeUser"));
+        logOut.addActionListener(e -> {
+            UserUtils.setPermission(false);
             try {
-                writer.write("exit \n");
-                writer.flush();
+                commandWriter.write("exit \n");
+                commandWriter.flush();
             } catch (IOException ex) {
                 ex.printStackTrace();
             }
         });
-        panel1.add(user);
-        add(panel1, BorderLayout.WEST);
-        JPanel panel2 = new JPanel(new GridLayout(1, 2));
-        table.setText(res.getString("table"));
-        table.addActionListener(e -> {
-            CardLayout layout = (CardLayout) (frame.cardLayout.getLayout());
-            layout.show(frame.cardLayout, "Таблица");
+        tableButton = new JButton();
+        buttonPanel = new JPanel(new GridLayout(1, 2));
+        tableButton.setText(resourceBundle.getString("table"));
+        tableButton.addActionListener(e -> {
+            CardLayout layout = (CardLayout) (mainWindow.getCardLayout().getLayout());
+            layout.show(mainWindow.getCardLayout(), "Таблица");
         });
-        visual.setText(res.getString("visual"));
-        visual.addActionListener(e -> {
-            CardLayout layout = (CardLayout) (frame.cardLayout.getLayout());
-            layout.show(frame.cardLayout, "Визуализация");
+
+        visualButton = new JButton();
+        visualButton.setText(resourceBundle.getString("visual"));
+        visualButton.addActionListener(e -> {
+            CardLayout layout = (CardLayout) (mainWindow.getCardLayout().getLayout());
+            layout.show(mainWindow.getCardLayout(), "Визуализация");
         });
-        panel2.add(table, BorderLayout.WEST);
-        panel2.add(visual, BorderLayout.CENTER);
-        panel2.add(localCombo, BorderLayout.EAST);
-        add(panel2, BorderLayout.CENTER);
+        buttonPanel.add(tableButton, BorderLayout.WEST);
+        buttonPanel.add(visualButton, BorderLayout.CENTER);
+        buttonPanel.add(localCombo, BorderLayout.EAST);
+        userInfoPanel.add(label);
+        userInfoPanel.add(labelUser);
+        userInfoPanel.add(logOut);
     }
 
-    public static void setUserLabel(String user) {
+    public void setUserLabel(String user) {
         labelUser.setText(user);
     }
 
     public void updateText(ResourceBundle res) {
         label.setText(res.getString("enteredAs"));
-        user.setText(res.getString("changeUser"));
-        visual.setText(res.getString("visual"));
-        table.setText(res.getString("table"));
+        logOut.setText(res.getString("changeUser"));
+        visualButton.setText(res.getString("visual"));
+        tableButton.setText(res.getString("table"));
     }
 }

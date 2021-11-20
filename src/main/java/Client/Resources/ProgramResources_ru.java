@@ -31,12 +31,12 @@ public class ProgramResources_ru extends ListResourceBundle implements Serializa
             {"clear", "Очистить"},
             {"group_counting_by_population", "Сгруппировать"},
             {"history", "История"},
-            {"info", "Информация"},
             {"remove_all_by_meters_above_sea_level", "Удалить города с уровнем"},
             {"remove_by_id", "Удалить по ID"},
             {"remove_last", "Удалить последний"},
-            {"update", "Обновить"},
+            {"update", "Обновить по ID"},
             {"execute_script", "Выполнить скрипт"},
+            {"help", "Помощь"},
             {"sort", "Сортировка"}
 
 

@@ -1,6 +1,6 @@
 package Client.GUI;
 
-import Server.Collection.City;
+import Server.Model.City;
 
 import javax.swing.*;
 import java.awt.*;
@@ -9,29 +9,28 @@ import java.awt.event.ActionListener;
 import java.awt.geom.Ellipse2D;
 
 public class ObjectButton extends JButton implements ActionListener {
-    City city;
-    long id;
-    Timer timer = new Timer(10, this);
-    Integer currentDiam = 0;
-    int diam, red, green, blue, x, y;
-    boolean grow = true;
-    boolean decrease = false;
-    Color color;
+    private City city;
+    private long id;
+    private Timer timer = new Timer(10, this);
+    private Integer currentDiam = 0;
+    private int diam, red, green, blue, x, y;
+    private boolean grow = true;
+    private boolean decrease = false;
 
-    ObjectButton(City city, long id, Integer diam, Integer x, Integer y, Integer currentDiam) {
+    ObjectButton(City city, long id, Integer diam, Integer x, Integer y) {
         this.city = city;
         this.id = id;
         this.diam = diam;
         this.x = x;
         this.y = y;
+        red = Math.abs(city.getUser().hashCode()) * 3 % 255;
+        green = Math.abs(city.getUser().hashCode()) * 2 % 255;
+        blue = Math.abs(city.getUser().hashCode()) % 255;
         setContentAreaFilled(false);
         setOpaque(true);
         Dimension size = new Dimension(diam + 1, diam + 1);
         setBackground(new Color(214, 255, 231));
         setPreferredSize(size);
-        red = Math.abs(city.getUser().hashCode()) * 3 % 255;
-        green = Math.abs(city.getUser().hashCode()) * 2 % 255;
-        blue = Math.abs(city.getUser().hashCode()) % 255;
         timer.start();
     }
 

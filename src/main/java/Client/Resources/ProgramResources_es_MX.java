@@ -37,6 +37,7 @@ public class ProgramResources_es_MX extends ListResourceBundle implements Serial
             {"update", "Actualizar"},
             {"execute_script", "Ejecutar script"},
             {"input", "Entrada de parámetros"},
+            {"help", "Ayuda"},
             {"sort", "Clasificación"}
     };
 

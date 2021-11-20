@@ -1,63 +1,43 @@
 package Server.Commands;
 
-import Client.DataUtils.CommandObject;
-import Server.ConnectionUtils.Request;
-import Server.DBUtils.CollectionDB;
-import Server.Launch.CollectWorker;
+import Server.Launch.CityService;
 import Server.Launch.ControlUnit;
+import Utils.ConnectionUtils.Request;
+import Utils.DataUtils.CommandUtils;
 
 import java.io.IOException;
 import java.sql.SQLException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
-/**
- * Класс команды remove_all_by_meters_above_sea_level-удаление элементов коллекции с данным полем metersAboveSeaLevel
- */
+
 public class RemoveAllBYMetersAboveSeaLevelCommand implements Command {
-    CollectWorker coll;
-    static Logger LOGGER;
-    TypeCommand type;
-    static int argsSize;
+    private final CityService cityService;
+    private final int argsSize = 1;
+    private final String name = "remove_all_by_meters_above_sea_level";
+    private final boolean isButton = true;
 
-    /**
-     * Конструктор - создание нового объекта с определенными значениями
-     *
-     * @param p-          переменная для управления командами
-     * @param collection- переменнаяи для работы с коллекцией
-     */
-    public RemoveAllBYMetersAboveSeaLevelCommand(CollectWorker collection, ControlUnit p) {
-        p.addCommand("remove_all_by_meters_above_sea_level", this);
-        this.coll = collection;
-        LOGGER = Logger.getLogger(RemoveAllBYMetersAboveSeaLevelCommand.class.getName());
-        type = TypeCommand.EDIT;
-        argsSize = 1;
-
+    public RemoveAllBYMetersAboveSeaLevelCommand(CityService cityService, ControlUnit controlUnit) throws IOException {
+        controlUnit.addCommand(name, this);
+        this.cityService = cityService;
     }
 
-    /**
-     * Функция выполнения команды
-     */
     @Override
-    public Request execute(CommandObject user) throws IOException, SQLException {
-        LOGGER.log(Level.INFO, "Отправка результата выполнения команды на сервер");
-        String result = CollectionDB.removeMASLBD(Integer.parseInt(user.getOption()), user.getLogin());
-        String answer = coll.remove_by_meters_above_sea_level(Integer.parseInt(user.getOption()), user.getLogin());
-
-        if (!result.isEmpty()) {
-            return new Request("Команда remove_all_by_meters_above_sea_level выполнена, но вы не смогли удалить следующие объекты из-за отказа в доступе:\n" + result, coll.getCollection(), null);
-        }
-        return new Request(answer, coll.getCollection(), null);
+    public Request execute(CommandUtils commandUtils) throws IOException, SQLException {
+        return cityService.removeByMetersAboveSeaLevel(Integer.parseInt(commandUtils.getOption()), commandUtils.getLogin());
     }
 
     @Override
     public String getName() {
-        return "remove_all_by_meters_above_sea_level";
+        return name;
     }
 
     @Override
-    public int getargsSize() {
+    public int getArgsSize() {
         return argsSize;
+    }
+
+    @Override
+    public boolean isButton() {
+        return isButton;
     }
 
 }

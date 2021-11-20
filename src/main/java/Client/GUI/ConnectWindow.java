@@ -6,34 +6,36 @@ import java.io.IOException;
 import java.io.PipedWriter;
 
 public class ConnectWindow extends JFrame {
-    PipedWriter writer;
-    JTextField port;
-    JTextField host;
+    private PipedWriter commandWriter;
+    private JTextField port;
+    private JPanel connectionPanel;
+    private JButton connectButton;
 
-    public ConnectWindow(PipedWriter writer) {
+    public ConnectWindow(PipedWriter commandWriter) {
         super("Подключение к серверу");
-        this.writer = writer;
+        this.commandWriter = commandWriter;
+        initComponents();
         Toolkit toolkit = Toolkit.getDefaultToolkit();
         setBounds(toolkit.getScreenSize().width / 5, toolkit.getScreenSize().height / 5, toolkit.getScreenSize().width / 5, toolkit.getScreenSize().height / 5);
-        port = new JTextField();
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         add(new JLabel("Введите необходимые данные"), BorderLayout.NORTH);
-        JPanel panel = new JPanel(new GridLayout(2, 2, 0, 10));
-        panel.add(new JLabel("Host"));
-        panel.add(host = new JTextField());
-        panel.add(new JLabel("PORT"));
-        panel.add(port = new JTextField());
-        add(panel, BorderLayout.CENTER);
-        JButton button = new JButton("connect");
-        button.addActionListener(e -> {
+        add(connectionPanel, BorderLayout.CENTER);
+        add(connectButton, BorderLayout.SOUTH);
+    }
+
+    private void initComponents() {
+        port = new JTextField();
+        connectionPanel = new JPanel(new GridLayout(1, 2, 0, 10));
+        connectionPanel.add(new JLabel("PORT"));
+        connectionPanel.add(port = new JTextField());
+        connectButton = new JButton("connect");
+        connectButton.addActionListener(e -> {
             try {
-                writer.write(host.getText() + "\n");
-                writer.write(port.getText() + "\n");
-                writer.flush();
+                commandWriter.write(port.getText() + "\n");
+                commandWriter.flush();
             } catch (IOException ex) {
                 ex.printStackTrace();
             }
         });
-        add(button, BorderLayout.SOUTH);
     }
 }

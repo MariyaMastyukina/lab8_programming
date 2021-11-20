@@ -1,73 +1,41 @@
 package Server.Commands;
 
-import Client.DataUtils.CommandObject;
-import Server.Collection.City;
-import Server.ConnectionUtils.Request;
-import Server.DBUtils.CollectionDB;
-import Server.Launch.CollectWorker;
+import Server.Launch.CityService;
 import Server.Launch.ControlUnit;
+import Utils.ConnectionUtils.Request;
+import Utils.DataUtils.CommandUtils;
 
 import java.io.IOException;
 import java.sql.SQLException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
-/**
- * Класс команды remove_by_id-Удаление элементов по id
- */
 
 public class RemoveByIdCommand implements Command {
-    CollectWorker coll;
-    static Logger LOGGER;
-    TypeCommand type;
-    static int argsSize;
+    private final CityService cityService;
+    private final int argsSize = 1;
+    private final String name = "remove_by_id";
+    private final boolean isButton = true;
 
-    /**
-     * Конструктор - создание нового объекта с определенными значениями
-     *
-     * @param p-          переменная для управления командами
-     * @param collection- переменнаяи для работы с коллекцией
-     */
-    public RemoveByIdCommand(ControlUnit p, CollectWorker collection) {
-        p.addCommand("remove_by_id", this);
-        this.coll = collection;
-        LOGGER = Logger.getLogger(RemoveByIdCommand.class.getName());
-        type = TypeCommand.EDIT;
-        argsSize = 1;
-
+    public RemoveByIdCommand(ControlUnit controlUnit, CityService cityService) throws IOException {
+        controlUnit.addCommand(name, this);
+        this.cityService = cityService;
     }
 
-    /**
-     * Функция выполнения команды
-     */
     @Override
-    public Request execute(CommandObject CO) throws IOException, SQLException {
-        LOGGER.log(Level.INFO, "Отправка результата выполнения команды на сервер");
-        String checker = null;
-        long id = Long.parseLong(CO.getOption());
-        if (coll.getSize() != 0) {
-            for (City city : coll.getCollection()) {
-                if (city.getIdOfCity() == id) {
-                    checker = CollectionDB.removeIDBD(id, CO.getLogin());
-                    if (checker == null) {
-                        coll.remove_by_id(id, CO.getLogin());
-                        return new Request("Команда remove_by_id выполнена. Элемент из коллекции с id " + id + " удален", coll.getCollection(), null);
-                    } else return new Request(checker, coll.getCollection(), null);
-                }
-            }
-            return new Request("Элемента с таким id нет.", null, null);
-        } else {
-            return new Request("Команда remove_by_id не выполнена. Коллекция пуста", null, null);
-        }
+    public Request execute(CommandUtils commandUtils) throws IOException, SQLException {
+        return cityService.removeById(Integer.parseInt(commandUtils.getOption()), commandUtils.getLogin());
     }
 
     @Override
     public String getName() {
-        return "remove_by_id";
+        return name;
     }
 
     @Override
-    public int getargsSize() {
+    public int getArgsSize() {
         return argsSize;
+    }
+
+    @Override
+    public boolean isButton() {
+        return isButton;
     }
 }
