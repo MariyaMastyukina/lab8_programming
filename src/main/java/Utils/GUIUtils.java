@@ -44,18 +44,24 @@ public class GUIUtils {
         if (comboBoxes == null) {
             return;
         }
+        System.out.println(defaultValues.get("climate"));
+        System.out.println(defaultValues.get("capital"));
+        System.out.println(defaultValues.get("government"));
         if (defaultValues.get("climate") != null) {
             comboBoxes.get(1).setSelectedItem(defaultValues.get("climate").toString());
+            System.out.println("CLIMATE");
         } else {
             comboBoxes.get(1).setSelectedItem("");
         }
-        if (defaultValues.get(resourceBundle.getString("government")) != null) {
+        if (defaultValues.get("government") != null) {
             comboBoxes.get(2).setSelectedItem(defaultValues.get("government").toString());
+            System.out.println("GOVER");
         } else {
             comboBoxes.get(2).setSelectedItem("");
         }
         if (defaultValues.get("capital") != null) {
             comboBoxes.get(0).setSelectedItem(defaultValues.get("capital").toString());
+            System.out.println("CAP");
         } else {
             comboBoxes.get(0).setSelectedItem("");
         }

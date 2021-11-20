@@ -88,6 +88,7 @@ public class EditWindow extends JDialog {
         capitalBox = new JComboBox();
         governmentBox = new JComboBox();
         governorField = new JTextField();
+        ownerField = new JLabel();
         comboBoxes = List.of(capitalBox, climateBox, governmentBox);
         fields = List.of(nameField, xField, yField, areaField, populationField, metersField, governorField);
         idLabel = new JLabel();
@@ -102,8 +103,8 @@ public class EditWindow extends JDialog {
         capitalLabel = new JLabel();
         governmentLabel = new JLabel();
         governorLabel = new JLabel();
-        labels = List.of(idLabel, nameLabel, xLabel, yLabel, dateCreationLabel, areaLabel, populationLabel, metersLabel, capitalLabel, climateLabel, governmentLabel, governorLabel);
-
+        ownerLabel = new JLabel();
+        labels = List.of(idLabel, nameLabel, xLabel, yLabel, dateCreationLabel, areaLabel, populationLabel, metersLabel, capitalLabel, climateLabel, governmentLabel, governorLabel, ownerLabel);
         climateBox.addItem("");
         climateBox.addItem("HUMIDCONTINENTAL");
         climateBox.addItem("SUBARCTIC");
@@ -115,6 +116,7 @@ public class EditWindow extends JDialog {
         governmentBox.addItem("CORPORATOCRACY");
         governmentBox.addItem("MERITOCRACY");
         governmentBox.addItem("OLIGARCHY");
+        fillFields(defaultValues);
         editPanel.add(idLabel);
         editPanel.add(idField);
         editPanel.add(nameLabel);
@@ -141,7 +143,6 @@ public class EditWindow extends JDialog {
         editPanel.add(governorField);
         editPanel.add(ownerLabel);
         editPanel.add(ownerField);
-        fillFields(defaultValues);
 
         buttonsPanel = new JPanel(new GridLayout(1, 2));
         applyChangesButton = new JButton();
@@ -175,7 +176,7 @@ public class EditWindow extends JDialog {
         @Override
         public void actionPerformed(ActionEvent e) {
             try {
-                commandWriter.write("remove_by_id " + idLabel.getText() + "\n");
+                commandWriter.write("remove_by_id " + idField.getText() + "\n");
                 commandWriter.flush();
                 setVisible(false);
             } catch (IOException ex) {
@@ -195,7 +196,7 @@ public class EditWindow extends JDialog {
         public void actionPerformed(ActionEvent e) {
             try {
                 if (ValidationUtils.checkFields(fields, component, comboBoxes)) {
-                    commandWriter.write("update " + idLabel.getText() + "\n");
+                    commandWriter.write("update " + idField.getText() + "\n");
                     commandWriter.write(nameField.getText() + "\n");
                     commandWriter.write(xField.getText() + "\n");
                     commandWriter.write(yField.getText() + "\n");

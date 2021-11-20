@@ -18,22 +18,22 @@ import java.util.Locale;
 import java.util.ResourceBundle;
 
 public class UserUtils {
-    private static ResourceBundle res;
+    private static ResourceBundle resourceBundle;
     private String login;
-    private static Request table;
+    private static Request request;
     private char[] password;
     private static boolean permission;
     private static MainWindow mainWindow;
     private static AuthorizationWindow authorization = null;
-    private static PipedReader reader = new PipedReader();
-    private static BufferedReader br = new BufferedReader(reader);
-    private static PipedWriter writer;
+    private static PipedReader commandReader = new PipedReader();
+    private static BufferedReader bufferedReader = new BufferedReader(commandReader);
+    private static PipedWriter commandWriter;
     private static LoginWindow loginWindow;
     private static RegisterWindow registerWindow;
 
     static {
         try {
-            writer = new PipedWriter(reader);
+            commandWriter = new PipedWriter(commandReader);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -51,20 +51,20 @@ public class UserUtils {
         this.password = password;
     }
 
-    public static UserUtils createUser(IOInterfaceStream ioServer, Component component, PipedWriter cmdWriter) throws IOException, ClassNotFoundException {
+    public static UserUtils createUser(IOInterfaceStream ioServer, Component component, PipedWriter commandWriter) throws IOException, ClassNotFoundException {
         UserUtils userUtils = new UserUtils();
         Request request = null;
         permission = false;
         if (authorization == null) {
-            authorization = new AuthorizationWindow(writer);
+            authorization = new AuthorizationWindow(UserUtils.commandWriter);
         }
         synchronized (UserUtils.class) {
             authorization.setVisible(true);
-            while (!br.ready()) {
+            while (!bufferedReader.ready()) {
 
             }
             authorization.setVisible(false);
-            String action = br.readLine();
+            String action = bufferedReader.readLine();
             while (!permission) {
                 if (action.equals("check_in")) {
                     checkIn(ioServer, userUtils);
@@ -86,9 +86,9 @@ public class UserUtils {
                     ioServer.writeObj(currentCommand);
                     while (!ioServer.ready()) {
                     }
-                    table = (Request) ioServer.readObj();
-                    res = ResourceBundle.getBundle("Client.Resources.ProgramResources", locales[0]);
-                    mainWindow = new MainWindow(locales, cmdWriter, table, res, userUtils);
+                    UserUtils.request = (Request) ioServer.readObj();
+                    resourceBundle = ResourceBundle.getBundle("Client.Resources.ProgramResources", locales[0]);
+                    mainWindow = new MainWindow(locales, commandWriter, UserUtils.request, resourceBundle, userUtils);
                     mainWindow.setUserInfo(userUtils.getLogin());
                     mainWindow.setVisible(true);
                 } else {
@@ -100,16 +100,16 @@ public class UserUtils {
     }
 
     private static void signIn(IOInterfaceStream ioServer, UserUtils userUtils) throws IOException {
-        loginWindow = new LoginWindow(writer);
-        registerWindow = new RegisterWindow(writer);
+        if (registerWindow == null) registerWindow = new RegisterWindow(commandWriter);
+        if (loginWindow == null) loginWindow = new LoginWindow(commandWriter);
         loginWindow.setVisible(true);
-        String login = br.readLine();
-        char[] password = br.readLine().toCharArray();
+        String login = bufferedReader.readLine();
+        char[] password = bufferedReader.readLine().toCharArray();
         while (login.isEmpty()) {
             JOptionPane.showMessageDialog(loginWindow, "Имя пользователя не может быть пустым", "ОШИБКА", JOptionPane.ERROR_MESSAGE);
-            while (!br.ready()) {
+            while (!bufferedReader.ready()) {
             }
-            login = br.readLine();
+            login = bufferedReader.readLine();
         }
         CommandUtils commandUtils = new CommandUtils("sign_in");
         commandUtils.setLogin(login);
@@ -121,18 +121,18 @@ public class UserUtils {
 
 
     private static void checkIn(IOInterfaceStream ioServer, UserUtils userUtils) throws IOException {
-        registerWindow = new RegisterWindow(writer);
-        loginWindow = new LoginWindow(writer);
+        if (registerWindow == null) registerWindow = new RegisterWindow(commandWriter);
+        if (loginWindow == null) loginWindow = new LoginWindow(commandWriter);
         registerWindow.setVisible(true);
-        while (!br.ready()) {
+        while (!bufferedReader.ready()) {
         }
-        String login = br.readLine();
-        char[] password = br.readLine().toCharArray();
+        String login = bufferedReader.readLine();
+        char[] password = bufferedReader.readLine().toCharArray();
         while (login.isEmpty()) {
             JOptionPane.showMessageDialog(registerWindow, "Имя пользователя не может быть пустым", "ОШИБКА", JOptionPane.ERROR_MESSAGE);
-            while (!br.ready()) {
+            while (!bufferedReader.ready()) {
             }
-            login = br.readLine();
+            login = bufferedReader.readLine();
         }
         CommandUtils commandUtils = new CommandUtils("check_in");
         commandUtils.setLogin(login);
