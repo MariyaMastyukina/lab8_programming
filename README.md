@@ -3,8 +3,6 @@ An application with GUI which allows you work with data of different Cities
 
 <img src="./img/table_picture.png" alt="table"/>
 <img src="./img/visual_picture.png" alt="visual"/>
-![Image alt](https://github.com/evreechka/City_Builder_Visualization/raw/master/img/table_picture.png)
-![Image alt](https://github.com/evreechka/City_Builder_Visualization/raw/master/img/visual_picture.png)
 **Functionality:**
 - Registration and Authentication.
 - Managing with table of existing cities.
