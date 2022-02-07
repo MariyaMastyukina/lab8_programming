@@ -35,8 +35,8 @@ An application with GUI which allows you work with data of different Cities
 7. Maven
 
 **Launch**
-   
-1) mvn package -PServer
-2) Write port in console
-3) mvn package -PClient
-4) Write the same port
+
+1. `mvn package -PServer`
+2. Write port in console
+3. `mvn package -PClient`
+4. Write the same port
